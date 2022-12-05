@@ -3,6 +3,7 @@ import os.path
 from typing import Any
 import logging
 
+
 class ConfigurationValues:
     """
     the main point of this class is to wrap the configparser and make it easier to use
