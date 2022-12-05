@@ -92,6 +92,13 @@ class ConfigurationValues:
         * if the section or the key itself is missing form the .inc file the default value is returned
         :return: the value as string
         """
+
+        # we first make sure that key is in the correct format and valid
+        if not all([keyword in key.keys() for keyword in ["key", "section", "default"]]):
+            # some keywords are missing
+            msg = f"the given key({key}) is in the wrong format"
+            logging.fatal(msg)
+            raise KeyError(msg)
         if not key["section"] in self.__config.sections():
             logging.warning(f"section \'{key['section']}\' is missing, using default values")
             return key["default"]
