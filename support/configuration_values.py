@@ -1,7 +1,7 @@
 import configparser
 import os.path
 from typing import Any
-
+import logging
 
 class ConfigurationValues:
     """
@@ -30,9 +30,9 @@ class ConfigurationValues:
 
         # when adding new key, make sure to add it to the values list!
 
-        data_base_path  = {"section": "DataBase",    "key": "Data Base Path",           "default": "database_sql"}
-        special_res     = {"section": "Resolution",  "key": "special resolution(Km)",   "default": "1"}
-        time_res        = {"section": "Resolution",  "key": "time resolution(days)",    "default": "1"}
+        data_base_path = {"section": "DataBase", "key": "Data Base Path", "default": "database_sql"}
+        special_res = {"section": "Resolution", "key": "special resolution(Km)", "default": "1"}
+        time_res = {"section": "Resolution", "key": "time resolution(days)", "default": "1"}
 
         values = [
             data_base_path,
@@ -69,8 +69,7 @@ class ConfigurationValues:
         :return: None
         """
 
-        print(f"configuration file is missing, creating a new one at {self.__path}")
-        # TODO: add a log at this point with some msg like this "creating a new configuration file"
+        logging.warning(f"configuration file is missing, creating a new one at \'{self.__path}\'")
 
         # first, create the sections
         for section in ConfigurationValues.Keys.sections():
@@ -93,12 +92,10 @@ class ConfigurationValues:
         :return: the value as string
         """
         if not key["section"] in self.__config.sections():
-            print(f"section \'{key['section']}\' is missing, using default values")
-            # TODO: log that the section is missing
+            logging.warning(f"section \'{key['section']}\' is missing, using default values")
             return key["default"]
         if not key["key"] in self.__config[key["section"]]:
-            # TODO: log that the key is missing
-            print(f"key \'{key['key']}\' is missing at \'{key['section']}\', using default values")
+            logging.warning(f"key \'{key['key']}\' is missing at \'{key['section']}\', using default values")
             return key["default"]
 
         return self.__config[key["section"]][key["key"]]
