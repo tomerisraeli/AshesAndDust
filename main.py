@@ -9,8 +9,11 @@ class AshesAndDust:
     the user interfaces should use it to call the different features of the program
     """
 
+    # the path to the config file
+    __Config_File_Path = ""
+
     def __init__(self):
-        self.__config = ConfigurationValues()
+        self.__config = ConfigurationValues(AshesAndDust.__Config_File_Path)
         self.__data_base = DataBase()
         self.__model = None  # the model to use
 
