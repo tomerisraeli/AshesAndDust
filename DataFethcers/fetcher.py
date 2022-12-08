@@ -1,5 +1,5 @@
 from DataBase.data_base import DataBase
-from support.configuration_values import ConfigurationValues
+from support.ConfigurationValues.configuration_values import ConfigurationValues
 
 """
 every resource should have a fetcher. the fetcher is responsible for fetching and updating the data in the database

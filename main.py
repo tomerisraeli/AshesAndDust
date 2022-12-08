@@ -1,5 +1,5 @@
 from DataBase.data_base import DataBase
-from support.configuration_values import ConfigurationValues
+from support.ConfigurationValues.configuration_values import ConfigurationValues
 
 
 # TODO: add logs
