@@ -1,7 +1,7 @@
 import os
 from copy import copy
 
-from support.ConfigurationValues.configuration_values import ConfigurationValues
+from support.configuration_values import ConfigurationValues
 
 file_path = "test.ini"
 
