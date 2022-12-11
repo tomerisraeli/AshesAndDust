@@ -12,21 +12,14 @@ class Fetcher:
     this class implements the basic structure of a fetcher
     """
 
-    @staticmethod
-    def fetch(db: DataBase, config: ConfigurationValues) -> None:
+    def __init__(self, db: DataBase, config: ConfigurationValues):
+        self.__db = db
+        self.__config = config
+
+    def fetch(self) -> None:
         """
         fetch the data from the relevant resource and store it at the DataBase
-        :param config:
-        :param db:
-        :return:
+        :return: None
         """
         pass
 
-    @staticmethod
-    def get_last_update(db: DataBase):
-        """
-        get the last date data was fetched from the resource
-        :param db:
-        :return: date
-        """
-        pass
