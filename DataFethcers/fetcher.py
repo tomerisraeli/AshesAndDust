@@ -12,7 +12,7 @@ class Fetcher:
     this class implements the basic structure of a fetcher
     """
 
-    def __init__(self, db: DataBase, config: ConfigurationValues):
+    def __init__(self, db, config: ConfigurationValues):
         self.__db = db
         self.__config = config
 

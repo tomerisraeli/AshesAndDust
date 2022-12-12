@@ -10,11 +10,11 @@ class AshesAndDust:
     """
 
     # the path to the config file
-    __Config_File_Path = ""
+    __Config_File_Path = "configuration"
 
     def __init__(self):
         self.__config = ConfigurationValues(AshesAndDust.__Config_File_Path)
-        self.__data_base = DataBase()
+        self.__data_base = DataBase(self.__config)
         self.__model = None  # the model to use
 
         # fetchers is a list of all the fetchers in use, every fetcher should be added to here
