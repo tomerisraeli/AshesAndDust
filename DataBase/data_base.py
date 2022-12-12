@@ -9,20 +9,22 @@ import logging
 # TODO: add logs
 class DataBase:
 
+    class Tables:
+        maiac_table = DataBaseTable(title="SatData", columns=[("date", DataBaseTable.DataTypes.INT)])
+
+        all = [
+            maiac_table
+        ]
+
     def __init__(self, config: ConfigurationValues):
         """
         open or create a new database if it doesn't exist yet
         """
-        self.__tables = [
-            DataBaseTable(title="SatData", columns=[
-                ("date", DataBaseTable.DataTypes.INT)
-            ])
-        ]
 
         self.__connection = DataBase.create_db_connection(config)
 
         # create tables
-        [self.__connection.execute(table.sql_cmd_open_or_create_table) for table in self.__tables]
+        [self.__connection.execute(table.sql_cmd_open_or_create_table) for table in DataBase.Tables.all]
 
     def __del__(self):
         """
@@ -50,3 +52,7 @@ class DataBase:
     @property
     def cursor(self):
         return self.__connection.cursor()
+
+    @property
+    def connection(self):
+        return self.__connection

@@ -1,4 +1,5 @@
 from DataBase.data_base import DataBase
+from DataFethcers.maiac_fetcher import MaiacFetcher
 from support.configuration_values import ConfigurationValues
 
 
@@ -18,7 +19,9 @@ class AshesAndDust:
         self.__model = None  # the model to use
 
         # fetchers is a list of all the fetchers in use, every fetcher should be added to here
-        self.__fetchers = []
+        self.__fetchers = [
+            MaiacFetcher(self.__data_base, self.__config)
+        ]
 
     def update_data_base(self):
         """
@@ -28,7 +31,7 @@ class AshesAndDust:
         """
 
         for fetcher in self.__fetchers:
-            fetcher.fetch(self.__data_base, self.__config)
+            fetcher.fetch()
 
     def get_approximation(self, date, output_path):
         """

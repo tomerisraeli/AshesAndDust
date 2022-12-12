@@ -23,7 +23,7 @@ class DataBaseTable:
         """
 
         columns_txt = ", ".join([" ".join(column) for column in self.__columns])
-        return f"CREATE TABLE if not exists {self.__title} ({columns_txt})"
+        return f"CREATE TABLE if not exists {self.__title} ({columns_txt});"
         # we may want to use "OPEN OR CREATE"
 
     def sql_cmd_insert(self, data):
@@ -35,7 +35,7 @@ class DataBaseTable:
 
         columns_names = ", ".join([title for (title, _) in self.__columns])
         values_txt = ", ".join(data)
-        return f"INSERT INTO {self.__title}({columns_names}) VALUES ({values_txt})"
+        return f"INSERT INTO {self.__title} ({columns_names}) VALUES ({values_txt});"
 
 
 if __name__ == '__main__':
