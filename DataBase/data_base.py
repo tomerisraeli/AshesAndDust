@@ -1,58 +1,61 @@
-from DataBase.data_base_table import DataBaseTable
+from DataBase.data_base_coordinate import DataBaseCoordinate
+from DataBase.data_base_data_batch import DataBatch
 from support.configuration_values import ConfigurationValues
 
-import sqlite3
-from sqlite3 import Error as SqlError
-import logging
+
+class DataBaseValue:
+    def __init__(self):
+        pass
 
 
 # TODO: add logs
 class DataBase:
-
-    class Tables:
-        maiac_table = DataBaseTable(title="SatData", columns=[("date", DataBaseTable.DataTypes.INT)])
-
-        all = [
-            maiac_table
-        ]
+    """
+    manage the access to the database which is saved as Netcdf
+    """
 
     def __init__(self, config: ConfigurationValues):
         """
-        open or create a new database if it doesn't exist yet
-        """
-
-        self.__connection = DataBase.create_db_connection(config)
-
-        # create tables
-        [self.__connection.execute(table.sql_cmd_open_or_create_table) for table in DataBase.Tables.all]
-
-    def __del__(self):
-        """
-        properly close the connection
-        :return:
-        """
-        logging.info(f"closed connection to DB")
-        self.__connection.close()
-
-    @staticmethod
-    def create_db_connection(config: ConfigurationValues):
-        """
-        create a db connection
         :param config:
-        :return: db connection
         """
-        connection = None
-        try:
-            connection = sqlite3.connect(config.get_key(ConfigurationValues.Keys.data_base_path))
-            logging.info(f"connected successfully to db at '{config.get_key(ConfigurationValues.Keys.data_base_path)}'")
-        except SqlError as e:
-            logging.fatal(f"connection to db at '{config.get_key(ConfigurationValues.Keys.data_base_path)}' failed!")
-        return connection
+        # TODO: open the database at the path saved at the config file
+        # TODO: create a new file if doesnt exists
+
+        self.__time_resolution = 1  # TODO: read the time resolution from config file
+        self.__spatial_resolution = 1  # TODO: read the spacial resolution from config file
+
+    def insert(self, data: DataBatch):
+        """
+        insert a new data batch to database, if the data already exists it should be overwritten
+        :param data: the batch of data to enter
+        :return: None
+        """
+        # TODO: implement
+        pass
+
+    def load(self, coordinates):
+        """
+        load data from the database
+        :param coordinates: the coordinates to load data for
+        :return: batch of data with the coordinates that were found in the database and there values
+        """
+        # TODO: implement
+        pass
 
     @property
-    def cursor(self):
-        return self.__connection.cursor()
+    def time_resolution(self):
+        return self.__time_resolution
 
     @property
-    def connection(self):
-        return self.__connection
+    def spatial_resolution(self):
+        return self.__spatial_resolution
+
+    @property
+    def reference_coordinate(self):
+        """
+        get a coordinate that exists in the database. since the coordinates in the database are saved at const
+        distance and time we must get a reference coordinate to create other valid coordinates.
+        :return: an arbitrary coordinate from the database
+        """
+        #TODO: implement
+        return DataBaseCoordinate(0, 0, 0)
