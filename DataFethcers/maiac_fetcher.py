@@ -1,8 +1,8 @@
 from DataBase.data_base import DataBase
-from DataFethcers.fetcher import Fetcher
+from DataFethcers.parser import Parser
 
 
-class MaiacFetcher(Fetcher):
+class MaiacFetcher(Parser):
 
     def fetch(self) -> None:
         """
