@@ -1,9 +1,9 @@
-from DataBase.data_base import DataBase
-from DataFethcers.maiac_fetcher import MaiacFetcher
 from support.configuration_values import ConfigurationValues
 
 
 # TODO: add logs
+
+
 class AshesAndDust:
     """
     the main class of the project.
@@ -15,23 +15,14 @@ class AshesAndDust:
 
     def __init__(self):
         self.__config = ConfigurationValues(AshesAndDust.__Config_File_Path)
-        self.__data_base = DataBase(self.__config)
-        self.__model = None  # the model to use
-
-        # fetchers is a list of all the fetchers in use, every fetcher should be added to here
-        self.__fetchers = [
-            MaiacFetcher(self.__data_base, self.__config)
-        ]
 
     def update_data_base(self):
         """
-        call all the fetchers to update the database.
+        call all the parsers and insert the data to the db
 
         :return:
         """
-
-        for fetcher in self.__fetchers:
-            fetcher.fetch()
+        pass
 
     def get_approximation(self, date, output_path):
         """
@@ -41,8 +32,3 @@ class AshesAndDust:
         """
         pass
 
-
-if __name__ == '__main__':
-    a = AshesAndDust()
-    a.update_data_base()
-    a.get_approximation(0, "")
