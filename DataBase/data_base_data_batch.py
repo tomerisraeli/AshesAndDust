@@ -1,6 +1,6 @@
 class DataBatch:
     """
-    hold a batch of data to write to or read from the database
+    hold a batch of data to write the db ot data that were read from the db
     """
 
     def __init__(self):

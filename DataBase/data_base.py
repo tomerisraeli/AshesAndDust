@@ -21,8 +21,8 @@ class DataBase:
         # TODO: open the database at the path saved at the config file
         # TODO: create a new file if doesnt exists
 
-        self.__time_resolution = 1  # TODO: read the time resolution from config file
-        self.__spatial_resolution = 1  # TODO: read the spacial resolution from config file
+        self.__time_resolution = 1  # TODO: read the time resolution from db file
+        self.__spatial_resolution = 1  # TODO: read the spacial resolution from db file
 
     def insert(self, data: DataBatch):
         """
