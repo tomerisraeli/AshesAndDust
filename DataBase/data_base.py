@@ -3,11 +3,6 @@ from DataBase.data_base_data_batch import DataBatch
 from support.configuration_values import ConfigurationValues
 
 
-class DataBaseValue:
-    def __init__(self):
-        pass
-
-
 # TODO: add logs
 class DataBase:
     """

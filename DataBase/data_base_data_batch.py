@@ -13,3 +13,10 @@ class DataBatch:
         :return:
         """
         return self.__data
+
+    def __add__(self, other):
+        pass
+
+    def __contains__(self, item):
+        pass
+
