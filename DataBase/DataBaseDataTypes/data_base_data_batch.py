@@ -14,17 +14,21 @@ class DataBatch:
         """
         create a new data batch
         """
-        self.__data = []
+        self.__data = {}
 
     def insert(self, coordinate: DataBaseCoordinate, values):
         """
-        insert new data to the batch. the last value added to each coordinate is the one used
+        insert new data to the batch if coordinate already exits, data is updated
         :param coordinate: the coordinate of the data
         :param values: a dict where the keys are DataBaseVariable and the values are at the DataBaseVariable matching
             type
         :return: None
         """
-        self.__data.append((coordinate, values))
+
+        if coordinate not in self.__data.keys():
+            self.__data[coordinate] = values
+            return
+        self.__data[coordinate] += values
 
     @property
     def data(self):

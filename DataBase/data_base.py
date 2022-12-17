@@ -49,9 +49,9 @@ class DataBase:
         self.__lat_res = self.__nc_file.lat_res
         self.__lon_res = self.__nc_file.lon_res
         self.__time_res = self.__nc_file.time_res
-        self.__root_coord = DataBaseCoordinate(self.__nc_file.root_lon,
-                                               self.__nc_file.root_lat,
-                                               self.__nc_file.root_time)
+        self.__root_coord = DataBaseCoordinate(self.__nc_file.min_lon,
+                                               self.__nc_file.min_lat,
+                                               self.__nc_file.min_time)
 
     @staticmethod
     def __create_file(ds, config):
@@ -59,10 +59,26 @@ class DataBase:
         create the file with all the data and variables
         :return:
         """
+
+        # insert size and resolution
+        ds.lat_res = float(config.get_key(ConfigurationValues.Keys.lat_res))
+        ds.lon_res = float(config.get_key(ConfigurationValues.Keys.lon_res))
+        ds.time_res = float(config.get_key(ConfigurationValues.Keys.time_res))
+        ds.min_lon = float(config.get_key(ConfigurationValues.Keys.data_base_min_lon))
+        ds.min_lat = float(config.get_key(ConfigurationValues.Keys.data_base_min_lat))
+        ds.min_time = float(config.get_key(ConfigurationValues.Keys.data_base_min_time))
+        ds.max_lon = float(config.get_key(ConfigurationValues.Keys.data_base_max_lon))
+        ds.max_lat = float(config.get_key(ConfigurationValues.Keys.data_base_max_lat))
+        ds.max_time = float(config.get_key(ConfigurationValues.Keys.data_base_max_lat))
+
+        # calc number of samples in lat and lon dimensions
+        lat_samples = int((ds.max_lat - ds.min_lat) / ds.lat_res) + 1
+        lon_samples = int((ds.max_lon - ds.min_lon) / ds.lon_res) + 1
+
         # first, we create the dimensions of the file
         ds.createDimension(DataBase.Constants.DIM_TIME, None)
-        ds.createDimension(DataBase.Constants.DIM_LAT, 10)
-        ds.createDimension(DataBase.Constants.DIM_LON, 10)
+        ds.createDimension(DataBase.Constants.DIM_LAT, lat_samples)
+        ds.createDimension(DataBase.Constants.DIM_LON, lon_samples)
 
         # add all variables
         for var in DataBase.Constants.ALL_VARIABLES:
@@ -70,13 +86,9 @@ class DataBase:
             file_var.units = var.units
             file_var.long_name = var.full_name
 
-        # insert size and resolution
-        ds.lat_res = float(config.get_key(ConfigurationValues.Keys.lat_res))
-        ds.lon_res = float(config.get_key(ConfigurationValues.Keys.lon_res))
-        ds.time_res = float(config.get_key(ConfigurationValues.Keys.time_res))
-        ds.root_lon = float(config.get_key(ConfigurationValues.Keys.data_base_min_lon))
-        ds.root_lat = float(config.get_key(ConfigurationValues.Keys.data_base_min_lat))
-        ds.root_time = float(config.get_key(ConfigurationValues.Keys.data_base_min_time))
+        ds[DataBase.Constants.VAR_LON.name][:] = np.arange(ds.min_lon, ds.max_lon + ds.lon_res, ds.lon_res)
+        ds[DataBase.Constants.VAR_LAT.name][:] = np.arange(ds.min_lat, ds.max_lat + ds.lat_res, ds.lat_res)
+        ds[DataBase.Constants.VAR_TIME.name][:] = [0] + np.arange(ds.min_time, ds.max_time + ds.time_res, ds.time_res)
 
     def __del__(self):
         """
@@ -111,13 +123,19 @@ class DataBase:
         :return: None
         """
 
-        for coord, data in data_batch.data:
+        self.__nc_file[DataBase.Constants.VAR_TEMP.name][20:60, 0:10, 0:10] = np.random.uniform(low=280,
+                                                                                                high=330,
+                                                                                                size=(40, 10, 10))
+
+        for coord, data in data_batch.data.items():
             print(data)
             lat_ind, lon_ind, time_ind = self.calc_axis_values(coord)
             print(lat_ind, lon_ind, time_ind)
             for var in data.keys():
-                v = self.__nc_file[var.name][:]
-                v[lat_ind][lon_ind][time_ind] = data[var]
+                print(data[var])
+                v = self.__nc_file[var.name]
+                print(v)
+                v[time_ind][lat_ind][lon_ind] = var.var_type(data[var])
 
     def load(self, data_range: DataRange, vars):
         """
@@ -133,13 +151,16 @@ class DataBase:
         max_indices = self.calc_axis_values(data_range.max_coord)
 
         # TODO: validate indices
+
         for var in vars:
-            d = self.__nc_file[var.name][
-                min_indices[0]:max_indices[0],
-                min_indices[1]:max_indices[1],
-                min_indices[2]:max_indices[2]
-                ]
-            print(d)
+            var_data = self.__nc_file[var.name][
+                       min_indices[0]:max_indices[0],
+                       min_indices[1]:max_indices[1],
+                       min_indices[2]:max_indices[2]
+                       ]
+            # TODO: insert data to the data batch
+            print(var_data[0][0][0])
+        return data_batch
 
     @property
     def root_coordinate(self):

@@ -11,5 +11,5 @@ if __name__ == '__main__':
     b = DataBatch()
     b.insert(DataBaseCoordinate(0,0,0), {DataBase.Constants.VAR_TEMP: 10})
     db.insert(b)
-
+    print("loading...")
     print(db.load(DataRange((0, 10), (0, 10), (1, 10)), [DataBase.Constants.VAR_TEMP]))
