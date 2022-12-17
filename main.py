@@ -11,7 +11,7 @@ class AshesAndDust:
     """
 
     # the path to the config file
-    __Config_File_Path = "configuration"
+    __Config_File_Path = "configuration.ini"
 
     def __init__(self):
         self.__config = ConfigurationValues(AshesAndDust.__Config_File_Path)

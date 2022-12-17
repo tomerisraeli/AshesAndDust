@@ -1,7 +1,0 @@
-[Resolution]
-special resolution(km) = 1
-time resolution(days) = 1
-
-[DataBase]
-data base path = database_sql
-

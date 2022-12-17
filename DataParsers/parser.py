@@ -1,4 +1,4 @@
-from DataBase.data_base_data_batch import DataBatch
+from DataBase.DataBaseDataTypes.data_base_data_batch import DataBatch
 from support.configuration_values import ConfigurationValues
 
 

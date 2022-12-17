@@ -31,13 +31,23 @@ class ConfigurationValues:
 
         # when adding new key, make sure to add it to the values list!
 
-        data_base_path = {"section": "DataBase", "key": "Data Base Path", "default": "database_sql"}
-        special_res = {"section": "Resolution", "key": "special resolution(Km)", "default": "1"}
-        time_res = {"section": "Resolution", "key": "time resolution(days)", "default": "1"}
+        data_base_path = {"section": "DataBase", "key": "Data Base Path", "default": "data_base.nc"}
+        data_base_min_lat = {"section": "DataBaseRange", "key": "min latitude", "default": "0"}
+        data_base_max_lat = {"section": "DataBaseRange", "key": "max latitude", "default": "30"}
+        data_base_min_lon = {"section": "DataBaseRange", "key": "min longitude", "default": "0"}
+        data_base_max_lon = {"section": "DataBaseRange", "key": "max longitude", "default": "30"}
+        data_base_min_time = {"section": "DataBaseRange", "key": "min time", "default": "0"}
+        data_base_max_time = {"section": "DataBaseRange", "key": "max time", "default": "30"}
+        lat_res = {"section": "DataBaseResolution", "key": "latitude resolution(degrees)", "default": "0.01"}
+        lon_res = {"section": "DataBaseResolution", "key": "longitude resolution(degrees)", "default": "0.01"}
+        time_res = {"section": "DataBaseResolution", "key": "time resolution(days)", "default": "1"}
 
         values = [
             data_base_path,
-            special_res,
+            data_base_max_lon, data_base_min_lon,
+            data_base_max_lat, data_base_min_lat,
+            data_base_max_time, data_base_min_time,
+            lat_res, lon_res,
             time_res
         ]
 
@@ -55,7 +65,7 @@ class ConfigurationValues:
         self.__config = configparser.ConfigParser()
         # load the file and parse the data
         if not os.path.isfile(self.__path):
-            # configuration file doesnt exists
+            # configuration.ini file doesnt exists
             self.__create_file()
             return
 
@@ -65,12 +75,12 @@ class ConfigurationValues:
 
     def __create_file(self):
         """
-        create a new configuration file
-        if called when a configuration file already exists it will be overwritten
+        create a new configuration.ini file
+        if called when a configuration.ini file already exists it will be overwritten
         :return: None
         """
 
-        logging.warning(f"configuration file is missing, creating a new one at \'{self.__path}\'")
+        logging.warning(f"configuration.ini file is missing, creating a new one at \'{self.__path}\'")
 
         # first, create the sections
         for section in ConfigurationValues.Keys.sections():
