@@ -33,6 +33,14 @@ class DBRange:
             1 + int((self.__max_lat - self.__min_lat) / self.__lat_res), \
             1 + int((self.__max_lon - self.__min_lon) / self.__lon_res)
 
+    @property
+    def relative_root(self):
+        """
+        get the root(the min coordinate) of the range
+        :return: (time, lat, lon) as tuple of floats
+        """
+        return self.__min_time, self.__min_lat, self.__min_lon
+
     def get_indices_approximation(self, time, lat, lon):
         """
         get the indices to the given location in the array

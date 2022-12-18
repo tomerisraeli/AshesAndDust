@@ -1,6 +1,7 @@
 from typing import Tuple
 
 import numpy as np
+from numpy import NaN
 
 from DataBase.DataBaseDataTypes.data_base_range import DBRange
 from DataBase.DataBaseDataTypes.data_base_variable import DataBaseVariable
@@ -23,6 +24,23 @@ class DBBatch:
                               fill_value=self.__var.default,
                               dtype=self.__var.var_type)
 
+    @property
+    def range(self):
+        return self.__range
+
+    @property
+    def data(self):
+        return self.__data
+
+    @property
+    def var(self):
+        return self.__var
+
+    @data.setter
+    def data(self, value):
+        # TODO: validate value
+        self.__data = value
+
     def insert(self, time: float, lat: float, lon: float, value):
         """
         insert data to the batch. the new value will override any existing value
@@ -44,4 +62,6 @@ class DBBatch:
         """
 
         indices = self.__range.get_indices_approximation(*item)
+        if self.__data[indices] == NaN:
+            return self.__var.default
         return self.__data[indices]

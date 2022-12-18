@@ -3,9 +3,9 @@ import os
 
 import numpy as np
 from netCDF4 import Dataset
-from DataBase.DataBaseDataTypes.data_base_coordinate import DataBaseCoordinate
-from DataBase.DataBaseDataTypes.data_base_data_batch import DataBatch
-from DataBase.DataBaseDataTypes.data_base_data_range import DataRange
+
+from DataBase.DataBaseDataTypes.data_base_data_batch import DBBatch
+from DataBase.DataBaseDataTypes.data_base_range import DBRange
 from DataBase.DataBaseDataTypes.data_base_variable import DataBaseVariable
 from support.approximations import round2res
 from support.configuration_values import ConfigurationValues
@@ -50,9 +50,9 @@ class DataBase:
         self.__lat_res = self.__nc_file.lat_res
         self.__lon_res = self.__nc_file.lon_res
         self.__time_res = self.__nc_file.time_res
-        self.__root_coord = DataBaseCoordinate(self.__nc_file.min_lon,
-                                               self.__nc_file.min_lat,
-                                               self.__nc_file.min_time)
+        self.__root_time = self.__nc_file.min_time
+        self.__root_lat = self.__nc_file.min_lat
+        self.__root_lon = self.__nc_file.min_lon
 
     @staticmethod
     def __create_file(ds, config):
@@ -117,75 +117,59 @@ class DataBase:
         DataBase.__create_file(ds, config)
         return ds
 
-    def insert(self, data_batch: DataBatch):
+    def insert(self, data_batch: DBBatch):
         """
         insert a new data batch to database, if the data already exists it should be overwritten
         :param data_batch: the batch of data to enter
         :return: None
         """
 
-        d, offset_cord = data_batch.get(self.__lat_res, self.__lon_res, self.__time_res)
-        lat_index, lon_index, time_index = self.calc_axis_values(offset_cord)
+        # TODO: make sure the res on the db and the batch range are the same
 
-        time_samples, lat_samples, lon_samples = d.shape
+        time_samples, lat_samples, lon_samples = data_batch.range.shape
 
+        offset_time, offset_lat, offset_lon = data_batch.range.relative_root
+        offset_time_index, offset_lat_index, offset_lon_index = self.calc_indices_values(offset_time,
+                                                                                         offset_lat,
+                                                                                         offset_lon)
         self.__nc_file[data_batch.var.name][
-        time_index:time_index + time_samples,
-        lat_index:lat_index + lat_samples,
-        lon_index:lon_index + lon_samples
-        ] = d
+        offset_time_index: offset_time + time_samples,
+        offset_lat_index: offset_lat_index + lat_samples,
+        offset_lon_index: offset_lon_index + lon_samples
+        ] = data_batch.data
 
-    def load(self, data_range: DataRange, var):
+    def load(self, data_range: DBRange, var):
         """
         load data from the database
         :param data_range: the range of data to load
         :param var: the var to load
-        :return: batch of data with the coordinates that were found in the database and there values
+        :return: batch of data with the given range and var values
         """
 
-        data_batch = DataBatch(var)
+        data_batch = DBBatch(var, data_range)
 
-        min_indices = self.calc_axis_values(data_range.min_coord)
-        max_indices = self.calc_axis_values(data_range.max_coord)
+        time_samples, lat_samples, lon_samples = data_batch.range.shape
 
-        # TODO: validate indices
+        offset_time, offset_lat, offset_lon = data_batch.range.relative_root
+        offset_time_index, offset_lat_index, offset_lon_index = self.calc_indices_values(offset_time,
+                                                                                         offset_lat,
+                                                                                         offset_lon)
+        data_batch.data = self.__nc_file[data_batch.var.name][
+                          offset_time_index: offset_time + time_samples,
+                          offset_lat_index: offset_lat_index + lat_samples,
+                          offset_lon_index: offset_lon_index + lon_samples
+                          ]
 
-        var_data = self.__nc_file[var.name][
-                   min_indices[0]:max_indices[0] + 1,
-                   min_indices[1]:max_indices[1] + 1,
-                   min_indices[2]:max_indices[2] + 1
-                   ]
-
-        for time_index in range(len(var_data)):
-            for lat_index in range(len(var_data[time_index])):
-                for lon_index in range(len(var_data[time_index][lat_index])):
-                    coord = DataBaseCoordinate(
-                        lon=round2res(data_range.min_coord.lon + self.__lon_res * lon_index, self.__lon_res),
-                        lat=round2res(data_range.min_coord.lat + self.__lat_res * lat_index, self.__lat_res),
-                        time=round2res(data_range.min_coord.time + self.__time_res * time_index, self.__time_res)
-                    )
-                    data_batch.insert(coord, var_data[time_index, lat_index, lon_index])
         return data_batch
 
-    @property
-    def root_coordinate(self):
+    def calc_indices_values(self, time: float, lat: float, lon: float):
         """
-        get a coordinate whose coordinate at the db is (0,0,0)
-        :return: an arbitrary coordinate from the database
-        """
-        return self.__root_coord
-
-    def calc_axis_values(self, coord: DataBaseCoordinate):
-        """
-        calc the axis values of the given coordinate
-        :param coord:
-        :return:
+        calc the indices of the given coordinate
+        :return: the said indices as tuple of floats - (time, lat, lon)
         """
 
-        lat_samples = (coord.lat - self.root_coordinate.lat) / self.__lat_res
-        lon_samples = (coord.lon - self.root_coordinate.lon) / self.__lon_res
-        time_samples = 0
-        if coord.time is not None:
-            time_samples = (coord.time - self.root_coordinate.time) / self.__time_res
+        lat_samples = (lat - self.__root_lat) / self.__lat_res
+        lon_samples = (lon - self.__root_lon) / self.__lon_res
+        time_samples = (time - self.__root_time) / self.__time_res
 
-        return int(lat_samples), int(lon_samples), int(time_samples)
+        return int(time_samples), int(lat_samples), int(lon_samples)

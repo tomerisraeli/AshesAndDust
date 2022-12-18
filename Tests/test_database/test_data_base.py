@@ -1,9 +1,8 @@
 import os
 import unittest
 
-from DataBase.DataBaseDataTypes.data_base_coordinate import DataBaseCoordinate
-from DataBase.DataBaseDataTypes.data_base_data_batch import DataBatch
-from DataBase.DataBaseDataTypes.data_base_data_range import DataRange
+from DataBase.DataBaseDataTypes.data_base_data_batch import DBBatch
+from DataBase.DataBaseDataTypes.data_base_range import DBRange
 from DataBase.data_base import DataBase
 from support.configuration_values import ConfigurationValues
 
@@ -22,12 +21,24 @@ class TestDataBase(unittest.TestCase):
 
     def test_insert_and_load_temp(self):
         db = DataBase(ConfigurationValues(TestDataBase.config_path))
-        batch = DataBatch(DataBase.Constants.VAR_TEMP)
+
+        data_range = DBRange(time_range=(0, 30, 1),
+                             lat_range=(0, 30, 0.01),
+                             lon_range=(0, 30, 0.01)
+                             )
+        batch = DBBatch(DataBase.Constants.VAR_TEMP, data_range)
         for i in range(30):
-            batch.insert(DataBaseCoordinate(0.1*i, 0.1*i, 0.1*i), i)
+            batch.insert(i, i, i, i*10)
         db.insert(batch)
 
-        data_loaded = db.load(batch.batch_range, DataBase.Constants.VAR_TEMP)
+        data_loaded = db.load(data_range, DataBase.Constants.VAR_TEMP)
         for i in range(30):
-            self.assertEqual(data_loaded[DataBaseCoordinate(0.1*i, 0.1*i, 0.1*i)], i, "loaded data is missing coordinates")
+            self.assertEqual(data_loaded[(i, i, i)], i*10,
+                             "loaded data is missing coordinates")
 
+    def test_res_validation(self):
+        """
+        check if the db allow the user to insert data with the wrong resolution
+        :return:
+        """
+        pass
