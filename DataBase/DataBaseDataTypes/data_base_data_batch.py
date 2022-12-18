@@ -1,82 +1,49 @@
+from typing import Tuple
+
 import numpy as np
 
 from DataBase.DataBaseDataTypes.data_base_coordinate import DataBaseCoordinate
 from DataBase.DataBaseDataTypes.data_base_data_range import DataRange
+from DataBase.DataBaseDataTypes.data_base_range import DBRange
 from DataBase.DataBaseDataTypes.data_base_variable import DataBaseVariable
 
 
-class DataBatch:
+class DBBatch:
     """
-    hold a batch of data to write the db ot data that were read from the db
+    hold a batch of data to write to the db or data that were read from the db
     """
 
-    def __init__(self, var: DataBaseVariable):
+    def __init__(self, var: DataBaseVariable, data_range: DBRange):
         """
-        create a new data batch
+        initialize a new db batch
+        :param var: the var to hold in the batch
         """
-        self.__data = {}
+
         self.__var = var
+        self.__range = data_range
+        self.__data = np.full(shape=data_range.shape,
+                              fill_value=self.__var.default,
+                              dtype=self.__var.var_type)
 
-    def insert(self, coordinate: DataBaseCoordinate, value):
+    def insert(self, time: float, lat: float, lon: float, value):
         """
-        insert new data to the batch if coordinate already exits, data is updated
-        :param coordinate: the coordinate of the data
-        :param value: the value of the coordinate
-        :return: None
-        """
-
-        self.__data[coordinate] = value
-
-    def get(self, lat_res, lon_res, time_res, data_range: DataRange = None):
-        """
-        get a 3d matrix of the given var (time, lat, lon) with th associated value for each coordinate
-        :param lat_res:
-        :param time_res:
-        :param lon_res:
-        :param data_range: the range to read, if None the full range is taken
-        :return: a 3d matrix and the offset - the min coordinate
-        """
-
-        if data_range is None:
-            data_range = self.batch_range
-
-        # fill the result with default values
-        data_arr = np.full(shape=data_range.shape(lat_res, lon_res, time_res),
-                           fill_value=self.__var.default,
-                           dtype=self.__var.var_type)
-
-        for coord, value in self.__data.items():
-            if coord in data_range:
-                data_arr[data_range.index_of(coord, lat_res, lon_res, time_res)] = value
-        return data_arr, data_range.min_coord
-
-    @property
-    def batch_range(self):
-        """
-        get the data range of the DataBatch (the min one)
+        insert data to the batch. the new value will override any existing value
+        :param value: the value to insert
+        :param time: the time coordinate of said value
+        :param lat: the lat coordinate of said value
+        :param lon: the lon coordinate of said value
         :return:
         """
 
-        return DataRange(
-            lat_range=(
-                min(self.__data.keys(), key=lambda c: c.lat).lat,
-                max(self.__data.keys(), key=lambda c: c.lat).lat
-            ), lon_range=(
-                min(self.__data.keys(), key=lambda c: c.lon).lon,
-                max(self.__data.keys(), key=lambda c: c.lon).lon
-            ), time_range=(
-                min(self.__data.keys(), key=lambda c: c.time).time,
-                max(self.__data.keys(), key=lambda c: c.time).time
-            )
-        )
+        indices = self.__range.get_indices_approximation(time, lat, lon)
+        self.__data[indices] = value
 
-    @property
-    def data(self):
-        return self.__data
+    def __getitem__(self, item: Tuple[float, float, float]):
+        """
+        get the stored value for the given location
+        :param item: the location to check for - (time, lat, lon)
+        :return:
+        """
 
-    @property
-    def var(self):
-        return self.__var
-
-    def __getitem__(self, item: DataBaseCoordinate):
-        return self.__data[item]
+        indices = self.__range.get_indices_approximation(*item)
+        return self.__data[indices]
