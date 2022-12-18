@@ -7,6 +7,7 @@ from DataBase.DataBaseDataTypes.data_base_coordinate import DataBaseCoordinate
 from DataBase.DataBaseDataTypes.data_base_data_batch import DataBatch
 from DataBase.DataBaseDataTypes.data_base_data_range import DataRange
 from DataBase.DataBaseDataTypes.data_base_variable import DataBaseVariable
+from support.approximations import round2res
 from support.configuration_values import ConfigurationValues
 
 
@@ -75,7 +76,7 @@ class DataBase:
         lat_samples = int((ds.max_lat - ds.min_lat) / ds.lat_res) + 1
         lon_samples = int((ds.max_lon - ds.min_lon) / ds.lon_res) + 1
 
-        # first, we create the dimensions of the file
+        # create the dimensions of the file
         ds.createDimension(DataBase.Constants.DIM_TIME, None)
         ds.createDimension(DataBase.Constants.DIM_LAT, lat_samples)
         ds.createDimension(DataBase.Constants.DIM_LON, lon_samples)
@@ -123,43 +124,47 @@ class DataBase:
         :return: None
         """
 
-        self.__nc_file[DataBase.Constants.VAR_TEMP.name][20:60, 0:10, 0:10] = np.random.uniform(low=280,
-                                                                                                high=330,
-                                                                                                size=(40, 10, 10))
+        d, offset_cord = data_batch.get(self.__lat_res, self.__lon_res, self.__time_res)
+        lat_index, lon_index, time_index = self.calc_axis_values(offset_cord)
 
-        for coord, data in data_batch.data.items():
-            print(data)
-            lat_ind, lon_ind, time_ind = self.calc_axis_values(coord)
-            print(lat_ind, lon_ind, time_ind)
-            for var in data.keys():
-                print(data[var])
-                v = self.__nc_file[var.name]
-                print(v)
-                v[time_ind][lat_ind][lon_ind] = var.var_type(data[var])
+        time_samples, lat_samples, lon_samples = d.shape
 
-    def load(self, data_range: DataRange, vars):
+        self.__nc_file[data_batch.var.name][
+        time_index:time_index + time_samples,
+        lat_index:lat_index + lat_samples,
+        lon_index:lon_index + lon_samples
+        ] = d
+
+    def load(self, data_range: DataRange, var):
         """
         load data from the database
         :param data_range: the range of data to load
-        :param vars: list of the vars to load
+        :param var: the var to load
         :return: batch of data with the coordinates that were found in the database and there values
         """
 
-        data_batch = DataBatch()
+        data_batch = DataBatch(var)
 
         min_indices = self.calc_axis_values(data_range.min_coord)
         max_indices = self.calc_axis_values(data_range.max_coord)
 
         # TODO: validate indices
 
-        for var in vars:
-            var_data = self.__nc_file[var.name][
-                       min_indices[0]:max_indices[0],
-                       min_indices[1]:max_indices[1],
-                       min_indices[2]:max_indices[2]
-                       ]
-            # TODO: insert data to the data batch
-            print(var_data[0][0][0])
+        var_data = self.__nc_file[var.name][
+                   min_indices[0]:max_indices[0] + 1,
+                   min_indices[1]:max_indices[1] + 1,
+                   min_indices[2]:max_indices[2] + 1
+                   ]
+
+        for time_index in range(len(var_data)):
+            for lat_index in range(len(var_data[time_index])):
+                for lon_index in range(len(var_data[time_index][lat_index])):
+                    coord = DataBaseCoordinate(
+                        lon=round2res(data_range.min_coord.lon + self.__lon_res * lon_index, self.__lon_res),
+                        lat=round2res(data_range.min_coord.lat + self.__lat_res * lat_index, self.__lat_res),
+                        time=round2res(data_range.min_coord.time + self.__time_res * time_index, self.__time_res)
+                    )
+                    data_batch.insert(coord, var_data[time_index, lat_index, lon_index])
         return data_batch
 
     @property

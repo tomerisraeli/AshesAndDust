@@ -44,3 +44,13 @@ class DataBaseCoordinate:
     @property
     def time(self):
         return self.__time
+
+    @property
+    def __tuple(self):
+        return self.time, self.lat, self.lon
+
+    def __eq__(self, other):
+        return self.__tuple == other.__tuple
+
+    def __hash__(self):
+        return hash(self.__tuple)

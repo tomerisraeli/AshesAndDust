@@ -1,4 +1,5 @@
 from DataBase.DataBaseDataTypes.data_base_coordinate import DataBaseCoordinate
+from DataBase.data_base_errors import CoordinateOutOfBoundsError
 from support import approximations
 
 
@@ -44,4 +45,35 @@ class DataRange:
     @property
     def max_coord(self):
         return DataBaseCoordinate(self.__max_lon, self.__max_lat, self.__max_time)
+
+    def shape(self, lat_res, lon_res, time_res):
+        """
+        get the shape of the range with the given res
+        :param lat_res:
+        :param lon_res:
+        :param time_res:
+        :return:
+        """
+
+        # we want index of the max coord +1 on each dimension
+        i1, i2, i3 = self.index_of(self.max_coord, lat_res, lon_res, time_res)
+        return i1 + 1, i2 + 1, i3 + 1
+
+    def index_of(self, coord: DataBaseCoordinate, lat_res, lon_res, time_res):
+        """
+        get the indices of the given coordinate
+        :param coord:
+        :param lat_res:
+        :param lon_res:
+        :param time_res:
+        :return:
+        """
+
+        if coord not in self:
+            raise CoordinateOutOfBoundsError("the given coordinate is out of the range")
+
+        return \
+            int((coord.time - self.__min_time) / time_res), \
+            int((coord.lat - self.__min_lat) / lat_res), \
+            int((coord.lon - self.__min_lon) / lon_res)
 

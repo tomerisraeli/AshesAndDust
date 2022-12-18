@@ -21,3 +21,14 @@ def discrete_approximation_up(res, reference, value):
     """
 
     return (int((reference - value) / res) + 1) * res + reference
+
+
+def round2res(value, resolution):
+    """
+    round the given value  mult of the resolution
+    :param value:
+    :param resolution:
+    :return:
+    """
+
+    return round(value / resolution) * resolution
