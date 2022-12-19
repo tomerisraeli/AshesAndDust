@@ -1,4 +1,5 @@
-from DataBase.DataBaseDataTypes.data_base_data_batch import DataBatch
+from DataBase.DataBaseDataTypes.data_base_data_batch import DBBatch
+from DataBase.DataBaseDataTypes.data_base_range import DBRange
 from support.configuration_values import ConfigurationValues
 
 
@@ -10,7 +11,7 @@ class Parser:
     def __init__(self, config: ConfigurationValues):
         self._config = config
 
-    def parse(self, file) -> DataBatch:
+    def parse(self, data_range: DBRange) -> DBBatch:
         """
         parse the data from the relevant resource
         :return: a DataBatch storing the new parsed data
