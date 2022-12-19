@@ -22,18 +22,18 @@ class TestDataBase(unittest.TestCase):
     def test_insert_and_load_temp(self):
         db = DataBase(ConfigurationValues(TestDataBase.config_path))
 
-        data_range = DBRange(time_range=(0, 30, 1),
+        data_range = DBRange(time_range=(0, 1, 1),
                              lat_range=(0, 30, 0.01),
                              lon_range=(0, 30, 0.01)
                              )
         batch = DBBatch(DataBase.Constants.VAR_TEMP, data_range)
         for i in range(30):
-            batch.insert(i, i, i, i*10)
+            batch.insert(1, i, i, i*10)
         db.insert(batch)
 
         data_loaded = db.load(data_range, DataBase.Constants.VAR_TEMP)
         for i in range(30):
-            self.assertEqual(data_loaded[(i, i, i)], i*10,
+            self.assertEqual(data_loaded[(1, i, i)], i*10,
                              "loaded data is missing coordinates")
 
     def test_res_validation(self):
