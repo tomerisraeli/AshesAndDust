@@ -32,23 +32,29 @@ class ConfigurationValues:
         # when adding new key, make sure to add it to the values list!
 
         data_base_path = {"section": "DataBase", "key": "Data Base Path", "default": "data_base.nc"}
-        data_base_min_lat = {"section": "DataBaseRange", "key": "min latitude", "default": "0"}
-        data_base_max_lat = {"section": "DataBaseRange", "key": "max latitude", "default": "30"}
-        data_base_min_lon = {"section": "DataBaseRange", "key": "min longitude", "default": "0"}
-        data_base_max_lon = {"section": "DataBaseRange", "key": "max longitude", "default": "30"}
-        data_base_min_time = {"section": "DataBaseRange", "key": "min time", "default": "0"}
-        data_base_max_time = {"section": "DataBaseRange", "key": "max time", "default": "30"}
+        data_base_min_lat = {"section": "DataBaseRange", "key": "min latitude", "default": "29.5"}
+        data_base_max_lat = {"section": "DataBaseRange", "key": "max latitude", "default": "33.5"}
+        data_base_min_lon = {"section": "DataBaseRange", "key": "min longitude", "default": "34"}
+        data_base_max_lon = {"section": "DataBaseRange", "key": "max longitude", "default": "36"}
+        data_base_min_time = {"section": "DataBaseRange", "key": "min time(days since 1.1.2000)", "default": "3640"}
+        data_base_max_time = {"section": "DataBaseRange", "key": "max time(days since 1.1.2000", "default": "10000"}
         lat_res = {"section": "DataBaseResolution", "key": "latitude resolution(degrees)", "default": "0.01"}
         lon_res = {"section": "DataBaseResolution", "key": "longitude resolution(degrees)", "default": "0.01"}
         time_res = {"section": "DataBaseResolution", "key": "time resolution(days)", "default": "1"}
+
+        ndvi_data_path = {
+            "section": "Resources",
+            "key": "NDVI .nc file path",
+            "default": "/Users/tomerisraeli/Library/CloudStorage/GoogleDrive-tomer.israeli.43@gmail.com/My Drive/year_2/Magdad/data_samples/NDVI/NDVI-ISRAEL-2010-2020"
+        }
 
         values = [
             data_base_path,
             data_base_max_lon, data_base_min_lon,
             data_base_max_lat, data_base_min_lat,
             data_base_max_time, data_base_min_time,
-            lat_res, lon_res,
-            time_res
+            lat_res, lon_res, time_res,
+            ndvi_data_path
         ]
 
         @staticmethod

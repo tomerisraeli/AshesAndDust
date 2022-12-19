@@ -37,8 +37,12 @@ class DataBase:
         VAR_LON = DataBaseVariable("lon", np.float32, (DIM_LAT,), "degrees east", "longitude")
         VAR_TIME = DataBaseVariable("time", np.float64, (DIM_TIME,), "hours since 1970-01-01", "time")
         VAR_TEMP = DataBaseVariable("temp", np.float64, (DIM_TIME, DIM_LAT, DIM_LON), "C", "air temp")
+        VAR_NDVI = DataBaseVariable("NDVI", np.float64, (DIM_TIME, DIM_LAT, DIM_LON), "ndvi", "how green is the land")
 
-        ALL_VARIABLES = [VAR_LAT, VAR_LON, VAR_TIME, VAR_TEMP]
+        ALL_VARIABLES = [
+            VAR_LAT, VAR_LON, VAR_TIME,
+            VAR_TEMP, VAR_NDVI
+        ]
 
     def __init__(self, config: ConfigurationValues):
         """
