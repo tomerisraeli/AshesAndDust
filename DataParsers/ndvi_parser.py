@@ -12,14 +12,15 @@ from support.configuration_values import ConfigurationValues
 
 class NDVIParser(Parser):
     """
-    parse the NDVI data
-
+    parse the NDVI data saved as NetCDF file.
+    you can collect the data from https://www.earthdata.nasa.gov/learn/find-data
     """
 
     # the data is saved as NetCDF file on the data_samples dir of our project
 
     def parse(self, data_range: DBRange) -> DBBatch:
         logging.info(f"parsing NDVI data from '{self.__file_path}'")
+
         batch = DBBatch(DataBase.Constants.VAR_NDVI, data_range)
         with Dataset(self.__file_path, mode="r", format="NETCDF4_CLASSIC") as ds:
             time_values, lat_values, lon_values = ds["time"][:], ds["lat"][:], ds["lon"][:]
