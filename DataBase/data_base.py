@@ -7,7 +7,6 @@ from netCDF4 import Dataset
 from DataBase.DataBaseDataTypes.data_base_data_batch import DBBatch
 from DataBase.DataBaseDataTypes.data_base_range import DBRange
 from DataBase.DataBaseDataTypes.data_base_variable import DataBaseVariable
-from support.approximations import round2res
 from support.configuration_values import ConfigurationValues
 
 
@@ -128,7 +127,7 @@ class DataBase:
         :return: None
         """
 
-        # TODO: make sure the res on the db and the batch range are the same
+        # TODO(Nakash): make sure the res on the db and the batch range are the same. if not throw an error
 
         time_samples, lat_samples, lon_samples = data_batch.range.shape
 

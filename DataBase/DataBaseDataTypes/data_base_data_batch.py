@@ -38,7 +38,7 @@ class DBBatch:
 
     @data.setter
     def data(self, value):
-        # TODO: validate value
+        # TODO(Nakash): validate the given value, make sure it is at the right dimensions
         self.__data = value
 
     def insert(self, time: float, lat: float, lon: float, value):

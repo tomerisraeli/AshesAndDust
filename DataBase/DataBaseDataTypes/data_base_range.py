@@ -20,7 +20,7 @@ class DBRange:
         self.__min_lat, self.__max_lat, self.__lat_res = lat_range
         self.__min_lon, self.__max_lon, self.__lon_res = lon_range
 
-        # TODO: data validation
+        # TODO(Nakash): data validation - make sure the res divides the given size and that max > min
 
     @property
     def shape(self):
