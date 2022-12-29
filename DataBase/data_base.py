@@ -122,8 +122,10 @@ class DataBase:
         return ds
 
     def resolution_check(self, data_batch: DBBatch):
-        if [self.__time_res, self.__lon_res, self.lat_res] != data_batch.range.resolution_vector():
-            raise DataBatchResolutionInvalid
+        # TODO: add docstrings
+        if (self.__time_res, self.lat_res, self.__lon_res) != data_batch.range.resolution_vector:
+            # TODO: add an error message, tell the user whats wrong
+            raise DataBatchResolutionInvalid()
 
     def insert(self, data_batch: DBBatch):
         """

@@ -23,12 +23,17 @@ class DBRange:
         self.range_validation()
 
     def range_validation(self):
+        """
+
+        :return:
+        """
+        # TODO: add docstrings
         if self.__min_time >= self.__max_time or not ((self.__max_time - self.__min_time) / self.__time_res).is_integer():
-            raise TimeRangeInvalid
+            raise TimeRangeInvalid()
         if self.__min_lon >= self.__max_lon or not (self.__lon_res % (self.__max_lon - self.__min_lon)).is_integer():
-            raise LongitudeRangeInvalid
+            raise LongitudeRangeInvalid()
         if self.__min_lat >= self.__max_lat or not (self.__lat_res % (self.__max_lat - self.__min_lat)).is_integer():
-            raise LatitudeRangeInvalid
+            raise LatitudeRangeInvalid()
 
     @property
     def shape(self):
@@ -40,6 +45,11 @@ class DBRange:
             1 + int((self.__max_time - self.__min_time) / self.__time_res), \
             1 + int((self.__max_lat - self.__min_lat) / self.__lat_res), \
             1 + int((self.__max_lon - self.__min_lon) / self.__lon_res)
+
+    @property
+    def resolution_vector(self):
+        # TODO: add docstring
+        return self.__time_res, self.__lat_res, self.__lon_res
 
     @property
     def relative_root(self):
@@ -70,6 +80,3 @@ class DBRange:
             )
 
         return indices
-
-    def resolution_vector(self):
-        return [self.__time_res, self.__lon_res, self.__lat_res]

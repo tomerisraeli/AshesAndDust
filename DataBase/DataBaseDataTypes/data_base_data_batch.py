@@ -38,7 +38,10 @@ class DBBatch:
 
     @data.setter
     def data(self, value):
+        # TODO: check for all the value dimensions
+        # get the necesserry shape by self.__range.shape
         if len(value) != len(self.__var.dimensions):
+            # TODO: change the exception
             raise Exception('value dimension invalid')
         self.__data = value
 
