@@ -38,8 +38,8 @@ class DBBatch:
 
     @data.setter
     def data(self, value):
-        if len(value) != len(self.__var.dimensions):
-            raise Exception('value dimension invalid')
+        # TODO(Nakash): validate the given value, make sure it is at the right dimensions
+
         self.__data = value
 
     def insert(self, time: float, lat: float, lon: float, value):
