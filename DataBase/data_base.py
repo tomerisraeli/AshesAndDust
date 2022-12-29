@@ -7,6 +7,7 @@ from netCDF4 import Dataset
 from DataBase.DataBaseDataTypes.data_base_data_batch import DBBatch
 from DataBase.DataBaseDataTypes.data_base_range import DBRange
 from DataBase.DataBaseDataTypes.data_base_variable import DataBaseVariable
+from data_base_errors import DataBatchResolutionInvalid
 from support.configuration_values import ConfigurationValues
 
 
@@ -121,7 +122,8 @@ class DataBase:
         return ds
 
     def resolution_check(self, data_batch: DBBatch):
-        if self.__lon_res != data_batch.range
+        if [self.__time_res, self.__lon_res, self.lat_res] != data_batch.range.resolution_vector():
+            raise DataBatchResolutionInvalid
 
     def insert(self, data_batch: DBBatch):
         """
@@ -130,7 +132,6 @@ class DataBase:
         :return: None
         """
 
-        # TODO(Nakash): make sure the res on the db and the batch range are the same. if not throw an error
         self.resolution_check(data_batch)
 
         time_samples, lat_samples, lon_samples = data_batch.range.shape

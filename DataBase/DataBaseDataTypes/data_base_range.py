@@ -71,3 +71,5 @@ class DBRange:
 
         return indices
 
+    def resolution_vector(self):
+        return [self.__time_res, self.__lon_res, self.__lat_res]

@@ -24,3 +24,9 @@ class LatitudeRangeInvalid(Exception):
 
     """
     pass
+
+class DataBatchResolutionInvalid(Exception):
+    """
+
+    """
+    pass
