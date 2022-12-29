@@ -20,7 +20,15 @@ class DBRange:
         self.__min_lat, self.__max_lat, self.__lat_res = lat_range
         self.__min_lon, self.__max_lon, self.__lon_res = lon_range
 
-        # TODO(Nakash): data validation - make sure the res divides the given size and that max > min
+        self.range_test()
+
+    def range_test(self):
+        if self.__min_time >= self.__max_time or self.__time_res % (self.__max_time - self.__min_time) != 0:
+            raise Exception('Time range invalid')
+        if self.__min_lon >= self.__max_lon or self.__lon_res % (self.__max_lon - self.__min_lon) != 0:
+            raise Exception('Longitude range invalid')
+        if self.__min_lat >= self.__max_lat or self.__lat_res % (self.__max_lat - self.__min_lat) != 0:
+            raise Exception('Latitude range invalid')
 
     @property
     def shape(self):

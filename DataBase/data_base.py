@@ -120,6 +120,9 @@ class DataBase:
         DataBase.__create_file(ds, config)
         return ds
 
+    def resolution_check(self, data_batch: DBBatch):
+        if self.__lon_res != data_batch.range
+
     def insert(self, data_batch: DBBatch):
         """
         insert a new data batch to database, if the data already exists it should be overwritten
@@ -128,6 +131,7 @@ class DataBase:
         """
 
         # TODO(Nakash): make sure the res on the db and the batch range are the same. if not throw an error
+        self.resolution_check(data_batch)
 
         time_samples, lat_samples, lon_samples = data_batch.range.shape
 
