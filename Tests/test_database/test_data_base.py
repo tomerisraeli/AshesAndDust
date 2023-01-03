@@ -1,6 +1,7 @@
 import os
 import unittest
 
+from DataBase.DBConstants import DBConstants
 from DataBase.DataBaseDataTypes.data_base_data_batch import DBBatch
 from DataBase.DataBaseDataTypes.data_base_range import DBRange
 from DataBase.data_base import DataBase
@@ -26,12 +27,12 @@ class TestDataBase(unittest.TestCase):
                              lat_range=(0, 30, 0.01),
                              lon_range=(0, 30, 0.01)
                              )
-        batch = DBBatch(DataBase.Constants.VAR_TEMP, data_range)
+        batch = DBBatch(DBConstants.VAR_TEMP, data_range)
         for i in range(30):
             batch.insert(1, i, i, i*10)
         db.insert(batch)
 
-        data_loaded = db.load(data_range, DataBase.Constants.VAR_TEMP)
+        data_loaded = db.load(data_range, DBConstants.VAR_TEMP)
         for i in range(30):
             self.assertEqual(data_loaded[(1, i, i)], i*10,
                              "loaded data is missing coordinates")

@@ -3,6 +3,7 @@ import logging
 from matplotlib import pyplot as plt
 from netCDF4 import Dataset
 
+from DataBase.DBConstants import DBConstants
 from DataBase.DataBaseDataTypes.data_base_data_batch import DBBatch
 from DataBase.DataBaseDataTypes.data_base_range import DBRange
 from DataBase.data_base import DataBase
@@ -21,7 +22,7 @@ class NDVIParser(Parser):
     def parse(self, data_range: DBRange) -> DBBatch:
         logging.info(f"parsing NDVI data from '{self.__file_path}'")
 
-        batch = DBBatch(DataBase.Constants.VAR_NDVI, data_range)
+        batch = DBBatch(DBConstants.VAR_NDVI, data_range)
         with Dataset(self.__file_path, mode="r", format="NETCDF4_CLASSIC") as ds:
             time_values, lat_values, lon_values = ds["time"][:], ds["lat"][:], ds["lon"][:]
             data = ds["int16 _1_km_16_days_EVI"][:, :, :]

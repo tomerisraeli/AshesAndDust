@@ -4,45 +4,18 @@ import os
 import numpy as np
 from netCDF4 import Dataset
 
+from DataBase.DBConstants import DBConstants
 from DataBase.DataBaseDataTypes.data_base_data_batch import DBBatch
 from DataBase.DataBaseDataTypes.data_base_range import DBRange
-from DataBase.DataBaseDataTypes.data_base_variable import DataBaseVariable
-from support.approximations import round2res
 from support.configuration_values import ConfigurationValues
 
 
 class DataBase:
     """
     manage the access to the database which is saved as Netcdf
-    you may want to  learn more about NetCDF at
+    you may want to learn more about NetCDF at
         'https://unidata.github.io/python-training/workshop/Bonus/netcdf-writing'
     """
-
-    class Constants:
-        NETCDF_FORMAT = "NETCDF4_CLASSIC"
-
-        """
-        DIMENSIONS
-        constant of all the dimensions in the db
-        """
-        DIM_LAT = "lat"
-        DIM_LON = "lon"
-        DIM_TIME = "time"
-
-        """
-        VARIABLES
-        consts of all the vars in the db
-        """
-        VAR_LAT = DataBaseVariable("lat", np.float32, (DIM_LAT,), "degrees north", "latitude")
-        VAR_LON = DataBaseVariable("lon", np.float32, (DIM_LAT,), "degrees east", "longitude")
-        VAR_TIME = DataBaseVariable("time", np.float64, (DIM_TIME,), "hours since 1970-01-01", "time")
-        VAR_TEMP = DataBaseVariable("temp", np.float64, (DIM_TIME, DIM_LAT, DIM_LON), "C", "air temp")
-        VAR_NDVI = DataBaseVariable("NDVI", np.float64, (DIM_TIME, DIM_LAT, DIM_LON), "ndvi", "how green is the land")
-
-        ALL_VARIABLES = [
-            VAR_LAT, VAR_LON, VAR_TIME,
-            VAR_TEMP, VAR_NDVI
-        ]
 
     def __init__(self, config: ConfigurationValues):
         """
@@ -66,6 +39,7 @@ class DataBase:
         """
 
         # insert size and resolution
+        # TODO: make a oneliner
         ds.lat_res = float(config.get_key(ConfigurationValues.Keys.lat_res))
         ds.lon_res = float(config.get_key(ConfigurationValues.Keys.lon_res))
         ds.time_res = float(config.get_key(ConfigurationValues.Keys.time_res))
@@ -81,19 +55,19 @@ class DataBase:
         lon_samples = int((ds.max_lon - ds.min_lon) / ds.lon_res) + 1
 
         # create the dimensions of the file
-        ds.createDimension(DataBase.Constants.DIM_TIME, None)
-        ds.createDimension(DataBase.Constants.DIM_LAT, lat_samples)
-        ds.createDimension(DataBase.Constants.DIM_LON, lon_samples)
+        ds.createDimension(DBConstants.DIM_TIME, None)
+        ds.createDimension(DBConstants.DIM_LAT, lat_samples)
+        ds.createDimension(DBConstants.DIM_LON, lon_samples)
 
         # add all variables
-        for var in DataBase.Constants.ALL_VARIABLES:
+        for var in DBConstants.ALL_VARIABLES:
             file_var = ds.createVariable(var.name, var.var_type, var.dimensions)
             file_var.units = var.units
             file_var.long_name = var.full_name
 
-        ds[DataBase.Constants.VAR_LON.name][:] = np.arange(ds.min_lon, ds.max_lon + ds.lon_res, ds.lon_res)
-        ds[DataBase.Constants.VAR_LAT.name][:] = np.arange(ds.min_lat, ds.max_lat + ds.lat_res, ds.lat_res)
-        ds[DataBase.Constants.VAR_TIME.name][:] = [0] + np.arange(ds.min_time, ds.max_time + ds.time_res, ds.time_res)
+        ds[DBConstants.VAR_LON.name][:] = np.arange(ds.min_lon, ds.max_lon + ds.lon_res, ds.lon_res)
+        ds[DBConstants.VAR_LAT.name][:] = np.arange(ds.min_lat, ds.max_lat + ds.lat_res, ds.lat_res)
+        ds[DBConstants.VAR_TIME.name][:] = [0] + np.arange(ds.min_time, ds.max_time + ds.time_res, ds.time_res)
 
     def __del__(self):
         """
@@ -114,10 +88,10 @@ class DataBase:
         path = config.get_key(ConfigurationValues.Keys.data_base_path)
         if os.path.isfile(path):
             logging.info(f"opening NetCDF file at '{path}'")
-            return Dataset(path, mode="r+", format=DataBase.Constants.NETCDF_FORMAT)
+            return Dataset(path, mode="r+", format=DBConstants.NETCDF_FORMAT)
 
         logging.warning(f"creating NetCDF file at '{path}'")
-        ds = Dataset(path, mode="r+", format=DataBase.Constants.NETCDF_FORMAT)
+        ds = Dataset(path, mode="r+", format=DBConstants.NETCDF_FORMAT)
         DataBase.__create_file(ds, config)
         return ds
 
