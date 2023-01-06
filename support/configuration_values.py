@@ -47,6 +47,11 @@ class ConfigurationValues:
             "key": "NDVI .nc file path",
             "default": "/Users/tomerisraeli/Library/CloudStorage/GoogleDrive-tomer.israeli.43@gmail.com/My Drive/year_2/Magdad/data_samples/NDVI/NDVI-ISRAEL-2010-2020"
         }
+        elevation_data_path = {
+            "section": "Resources",
+            "key": "elevation .tif file path",
+            "default": "/Users/tomerisraeli/Library/CloudStorage/GoogleDrive-tomer.israeli.43@gmail.com/My Drive/year_2/Magdad/data_samples/elevation/elevation final wgs/elevatinowgs.tif"
+        }
 
         values = [
             data_base_path,
@@ -54,7 +59,7 @@ class ConfigurationValues:
             data_base_max_lat, data_base_min_lat,
             data_base_max_time, data_base_min_time,
             lat_res, lon_res, time_res,
-            ndvi_data_path
+            ndvi_data_path, elevation_data_path
         ]
 
         @staticmethod
