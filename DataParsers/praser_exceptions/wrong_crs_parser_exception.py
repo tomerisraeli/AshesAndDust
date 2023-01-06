@@ -1,0 +1,2 @@
+class CrsError(TypeError):
+    pass

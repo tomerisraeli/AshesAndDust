@@ -56,7 +56,7 @@ class DBRange:
             round((lon - self.__min_lon) / self.__lon_res)
 
         # validate values
-        if not all([0 <= indices[i] <= self.shape[i] for i in range(len(indices))]):
+        if not all([0 <= indices[i] < self.shape[i] for i in range(len(indices))]):
             raise CoordinateOutOfBoundsError(
                 f"the given coordinate (time: {time}, lat: {lat}, lon: {lon}) is out of range"
             )

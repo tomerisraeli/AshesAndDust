@@ -53,6 +53,7 @@ class DBBatch:
 
         indices = self.__range.get_indices_approximation(time, lat, lon)
         self.__data[indices] = value
+        print(f"{value} inserted at {indices}")
 
     def __getitem__(self, item: Tuple[float, float, float]):
         """
