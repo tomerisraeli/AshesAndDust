@@ -14,7 +14,7 @@ class TestConfigurationValues(unittest.TestCase):
         if os.path.isfile(file_path):
             os.remove(file_path)
 
-        # create a new config file
+        # create a new __config file
         _ = ConfigurationValues(file_path)
 
         self.assertTrue(os.path.isfile(file_path), "the file is missing")
@@ -22,7 +22,7 @@ class TestConfigurationValues(unittest.TestCase):
     def test_get_value_from_missing_section(self):
         default = "DEFAULT"
 
-        # create a new config file
+        # create a new __config file
         config = ConfigurationValues(file_path)
         self.assertEqual(
             config.get_key({"section": "missing section", "key": "key", "default": default}),
@@ -33,7 +33,7 @@ class TestConfigurationValues(unittest.TestCase):
     def test_get_value_from_missing_key(self):
         default = "DEFAULT"
 
-        # create a new config file
+        # create a new __config file
         config = ConfigurationValues(file_path)
         invalid_key = copy(ConfigurationValues.Keys.data_base_path)  # taking a random valid key
         invalid_key["key"] = "missing key"
@@ -48,7 +48,7 @@ class TestConfigurationValues(unittest.TestCase):
     def test_getting_a_value_other_than_default(self):
         wrong_value = "this is the wrong value"
 
-        # create a new config file
+        # create a new __config file
         config = ConfigurationValues(file_path)
         valid_key = copy(ConfigurationValues.Keys.data_base_path)  # taking a random valid key
         valid_key["default"] = wrong_value
@@ -60,7 +60,7 @@ class TestConfigurationValues(unittest.TestCase):
         )
 
     def test_wrong_format_key(self):
-        # create a new config file
+        # create a new __config file
         config = ConfigurationValues(file_path)
         try:
             config.get_key({})

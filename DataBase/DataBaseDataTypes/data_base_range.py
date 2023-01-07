@@ -63,3 +63,12 @@ class DBRange:
 
         return indices
 
+    def __str__(self):
+        return \
+            f"""
+            DBRange:
+            time: {self.__min_time} to {self.__max_time} with res {self.__time_res}
+            lat : {self.__min_lat} to {self.__max_lat} with res {self.__lat_res}
+            lon : {self.__min_lon} to {self.__max_lon} with res {self.__lon_res}
+            """
+

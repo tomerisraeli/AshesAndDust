@@ -21,7 +21,7 @@ class TifParser(Parser):
         """
         initialize a new .tif parser
 
-        :param config: the config values
+        :param config: the __config values
         :param path: the path of the tif file
         :param var: the db var relevant to the raster
         :param band: the band in which the data is saved on at the raster
