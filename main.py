@@ -1,5 +1,9 @@
 import logging
 
+from matplotlib import pyplot as plt
+
+from DataBase.DBConstants import DBConstants
+from DataBase.DataBaseDataTypes.data_base_variable import DBVariable
 from DataBase.data_base import DataBase
 from DataParsers.elavation_parser import ElevationParser
 from support.configuration_values import ConfigurationValues
@@ -29,12 +33,16 @@ class AshesAndDust:
 
         logging.info("parsing elevation data")
         elevation_parser = ElevationParser(config=self.__config)
-        print(self.__db.range)
         elevation_data = elevation_parser.parse(self.__db.range)
         logging.info("parsed elevation data successfully")
         self.__db.insert(elevation_data)
         logging.info("elevation data inserted to db successfully")
 
+    def get_spatial_data(self, var: DBVariable):
+        rng = self.__db.range
+        print(rng)
+        logging.info(f"fetching {var.name} from db for range: {rng}")
+        return self.__db.load(rng, var)
 
     def get_approximation(self, date, output_path):
         """
@@ -50,3 +58,6 @@ if __name__ == '__main__':
 
     app = AshesAndDust()
     app.update_data_base()
+    data = app.get_spatial_data(DBConstants.VAR_ELEV)
+    plt.imshow(data.data[0], vmin=-500, vmax=3000)
+    plt.show()

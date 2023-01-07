@@ -72,7 +72,6 @@ def __create_file(ds, config):
         file_var.units = var.units
         file_var.long_name = var.full_name
 
-    print(np.linspace(ds.min_lat, ds.max_lat, lat_samples, endpoint=True))
     ds[DBConstants.VAR_LON.name][:] = np.linspace(ds.min_lon, ds.max_lon, lon_samples, endpoint=True)
     ds[DBConstants.VAR_LAT.name][:] = np.linspace(ds.min_lat, ds.max_lat, lat_samples, endpoint=True)
     ds[DBConstants.VAR_TIME.name][:] = [0] + np.arange(ds.min_time, ds.max_time + ds.time_res, ds.time_res)
@@ -118,10 +117,19 @@ class DataBase:
         offset_time_index, offset_lat_index, offset_lon_index = self.calc_indices_values(offset_time,
                                                                                          offset_lat,
                                                                                          offset_lon)
+
+        logging.info(
+            f"updating {data_batch.var.name} at time index {offset_time_index} to {offset_time_index + time_samples}, "
+            f"lat index {offset_lat_index} to {offset_lat_index + lat_samples} and "
+            f"lon index {offset_lon_index} to {offset_lon_index + lon_samples} "
+        )
+
+        print(data_batch.data)
+
         nc_file[data_batch.var.name][
-            offset_time_index: offset_time + time_samples,
-            offset_lat_index: offset_lat_index + lat_samples,
-            offset_lon_index: offset_lon_index + lon_samples
+        offset_time_index: offset_time_index + time_samples,
+        offset_lat_index: offset_lat_index + lat_samples,
+        offset_lon_index: offset_lon_index + lon_samples
         ] = data_batch.data
 
     @db_session
@@ -143,9 +151,9 @@ class DataBase:
                                                                                          offset_lat,
                                                                                          offset_lon)
         data_batch.data = nc_file[data_batch.var.name][
-                            offset_time_index: offset_time + time_samples,
-                            offset_lat_index: offset_lat_index + lat_samples,
-                            offset_lon_index: offset_lon_index + lon_samples
+                          offset_time_index: offset_time_index + time_samples,
+                          offset_lat_index: offset_lat_index + lat_samples,
+                          offset_lon_index: offset_lon_index + lon_samples
                           ]
 
         return data_batch
