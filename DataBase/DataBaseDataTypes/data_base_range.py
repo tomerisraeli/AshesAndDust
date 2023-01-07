@@ -53,7 +53,6 @@ class DBRange:
         :return:
         """
 
-
         indices = \
             approximations.index_approximation(self.__min_time, self.__time_res, time), \
             approximations.index_approximation(self.__min_lat, self.__lat_res, lat), \

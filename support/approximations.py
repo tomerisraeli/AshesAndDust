@@ -38,7 +38,7 @@ def index_approximation(base_value, resolution, value):
     """
     get the matching index of the given value
     :param base_value: the value of index 0
-    :param resolution: the dist between to indices
+    :param resolution: the dist between two indices
     :param value:
     :return:
     """

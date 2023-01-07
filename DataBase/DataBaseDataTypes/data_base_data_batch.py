@@ -54,6 +54,18 @@ class DBBatch:
         indices = self.__range.get_indices_approximation(time, lat, lon)
         self.__data[indices] = value
 
+    def insert_by_index(self, time: float, lat: float, lon: float, value):
+        """
+        insert data by indices of value instead of lat lon actual values
+        :param time:
+        :param lat:
+        :param lon:
+        :param value:
+        :return:
+        """
+        self.__data[time, lat, lon] = value
+
+
     def __getitem__(self, item: Tuple[float, float, float]):
         """
         get the stored value for the given location

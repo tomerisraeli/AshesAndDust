@@ -124,8 +124,6 @@ class DataBase:
             f"lon index {offset_lon_index} to {offset_lon_index + lon_samples} "
         )
 
-        print(data_batch.data)
-
         nc_file[data_batch.var.name][
         offset_time_index: offset_time_index + time_samples,
         offset_lat_index: offset_lat_index + lat_samples,

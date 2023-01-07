@@ -40,7 +40,6 @@ class AshesAndDust:
 
     def get_spatial_data(self, var: DBVariable):
         rng = self.__db.range
-        print(rng)
         logging.info(f"fetching {var.name} from db for range: {rng}")
         return self.__db.load(rng, var)
 

@@ -1,3 +1,9 @@
+import logging
+
+import numpy as np
+from matplotlib import pyplot as plt
+from matplotlib.pyplot import plot
+
 from DataBase.DataBaseDataTypes.data_base_data_batch import DBBatch
 from DataBase.DataBaseDataTypes.data_base_range import DBRange
 from DataParsers.parser import Parser
@@ -58,26 +64,24 @@ class TifParser(Parser):
         base_lat = raster.bounds.bottom
         base_lon = raster.bounds.left
 
-        lat_values = batch.range.lat_samples[
-            [raster.bounds.bottom <= val <= raster.bounds.top for val in batch.range.lat_samples]
-        ]
-        lon_values = batch.range.lon_samples[
-            [raster.bounds.left <= val <= raster.bounds.right for val in batch.range.lon_samples]
-        ]
+        logging.info(
+            f"populating tif data batch with base coord (lat:{base_lat}, lon:{base_lon}) to (lat:{raster.bounds.top}, lon:{raster.bounds.right}) with res (lat:{lat_res}, lon:{lon_res})")
 
-        for lat in lat_values:
+        lat_values = batch.range.lat_samples
+        lon_values = batch.range.lon_samples
+
+        for db_lat_index, lat in enumerate(lat_values):
             lat_index = approximations.index_approximation(base_lat, lat_res, lat)
 
-            for lon in lon_values:
+            for db_lon_index, lon in enumerate(lon_values):
                 lon_index = approximations.index_approximation(base_lon, lon_res, lon)
 
                 if None in [lon_index, lat_index]:
                     val = self.__var.default
-                else:
+                elif raster.bounds.left <= lon <= raster.bounds.right and \
+                        raster.bounds.bottom <= lat <= raster.bounds.top:
                     val = data[lat_index, lon_index]
+                else:
+                    val = self.__var.default
 
-                batch.insert(time=0,
-                             lat=lat,
-                             lon=lon,
-                             value=val
-                             )
+                batch.insert_by_index(0, db_lat_index, db_lon_index, val)
