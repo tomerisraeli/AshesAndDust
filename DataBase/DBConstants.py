@@ -23,7 +23,7 @@ class DBConstants:
     VAR_TIME = DBVariable("time", np.float64, (DIM_TIME,), "hours since 1970-01-01", "time")
     VAR_TEMP = DBVariable("temp", np.float64, (DIM_TIME, DIM_LAT, DIM_LON), "C", "air temp")
     VAR_NDVI = DBVariable("NDVI", np.float64, (DIM_TIME, DIM_LAT, DIM_LON), "ndvi", "how green is the land")
-    VAR_ELEV = DBVariable("elevation", np.float64, (DIM_TIME, DIM_LAT, DIM_LON), "elevation", "the elevation in "
+    VAR_ELEV = DBVariable("elevation", np.float64, (DIM_LAT, DIM_LON), "elevation", "the elevation in "
                                                                                                     "meters")
 
     ALL_VARIABLES = [

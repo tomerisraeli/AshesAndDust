@@ -109,26 +109,37 @@ class DataBase:
         :return: None
         """
 
-        # TODO: make sure the res on the db and the batch range are the same
-
         time_samples, lat_samples, lon_samples = data_batch.range.shape
+        # TODO: make sure the res on the db and the batch range are the same
 
         offset_time, offset_lat, offset_lon = data_batch.range.relative_root
         offset_time_index, offset_lat_index, offset_lon_index = self.calc_indices_values(offset_time,
                                                                                          offset_lat,
                                                                                          offset_lon)
 
-        logging.info(
-            f"updating {data_batch.var.name} at time index {offset_time_index} to {offset_time_index + time_samples}, "
-            f"lat index {offset_lat_index} to {offset_lat_index + lat_samples} and "
-            f"lon index {offset_lon_index} to {offset_lon_index + lon_samples} "
-        )
+        if data_batch.var.is_spatial_only:
+            logging.info(
+                f"updating {data_batch.var.name} (spatial), "
+                f"lat index {offset_lat_index} to {offset_lat_index + lat_samples} and "
+                f"lon index {offset_lon_index} to {offset_lon_index + lon_samples} "
+            )
 
-        nc_file[data_batch.var.name][
-        offset_time_index: offset_time_index + time_samples,
-        offset_lat_index: offset_lat_index + lat_samples,
-        offset_lon_index: offset_lon_index + lon_samples
-        ] = data_batch.data
+            nc_file[data_batch.var.name][
+            offset_lat_index: offset_lat_index + lat_samples,
+            offset_lon_index: offset_lon_index + lon_samples
+            ] = data_batch.data[0]
+        else:
+            logging.info(
+                f"updating {data_batch.var.name} at time index {offset_time_index} to {offset_time_index + time_samples}, "
+                f"lat index {offset_lat_index} to {offset_lat_index + lat_samples} and "
+                f"lon index {offset_lon_index} to {offset_lon_index + lon_samples} "
+            )
+
+            nc_file[data_batch.var.name][
+            offset_time_index: offset_time_index + time_samples,
+            offset_lat_index: offset_lat_index + lat_samples,
+            offset_lon_index: offset_lon_index + lon_samples
+            ] = data_batch.data
 
     @db_session
     def load(self, nc_file, data_range: DBRange, var):
@@ -148,11 +159,20 @@ class DataBase:
         offset_time_index, offset_lat_index, offset_lon_index = self.calc_indices_values(offset_time,
                                                                                          offset_lat,
                                                                                          offset_lon)
-        data_batch.data = nc_file[data_batch.var.name][
-                          offset_time_index: offset_time_index + time_samples,
-                          offset_lat_index: offset_lat_index + lat_samples,
-                          offset_lon_index: offset_lon_index + lon_samples
-                          ]
+
+        if var.is_spatial_only:
+            data_batch.data = [
+                nc_file[data_batch.var.name][
+                offset_lat_index: offset_lat_index + lat_samples,
+                offset_lon_index: offset_lon_index + lon_samples
+                ]
+            ]
+        else:
+            data_batch.data = nc_file[data_batch.var.name][
+                              offset_time_index: offset_time_index + time_samples,
+                              offset_lat_index: offset_lat_index + lat_samples,
+                              offset_lon_index: offset_lon_index + lon_samples
+                              ]
 
         return data_batch
 

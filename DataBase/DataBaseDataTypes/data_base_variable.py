@@ -20,3 +20,11 @@ class DBVariable:
         self.units = units
         self.full_name = full_name
         self.default = default
+
+    @property
+    def is_spatial_only(self):
+        """
+        check if the var is changing over time
+        :return:
+        """
+        return len(self.dimensions) == 2
