@@ -6,7 +6,7 @@ from DataBase.DBConstants import DBConstants
 from DataBase.DataBaseDataTypes.data_base_variable import DBVariable
 from DataBase.data_base import DataBase
 from DataParsers.distance_to_water_parser import DistanceToWaterParser
-from DataParsers.elavation_parser import ElevationParser
+from support import loggers
 from support.configuration_values import ConfigurationValues
 
 
@@ -35,16 +35,16 @@ class AshesAndDust:
         ]
 
         for parser in parsers:
-            logging.info(f"parsing using {parser.__module__}")
+            loggers.root_logger.info(f"parsing using {parser.__module__}")
             parsed_data = parser.parse(self.__db.range)
-            logging.info("parsed data successfully")
-            logging.debug("inserting data to db")
+            loggers.root_logger.info("parsed data successfully")
+            loggers.root_logger.debug("inserting data to db")
             self.__db.insert(parsed_data)
-            logging.info("data inserted to db successfully")
+            loggers.root_logger.info("data inserted to db successfully")
 
     def get_spatial_data(self, var: DBVariable):
         rng = self.__db.range
-        logging.info(f"fetching {var.name} from db for range: {rng}")
+        loggers.root_logger.info(f"fetching {var.name} from db for range: {rng}")
         return self.__db.load(rng, var)
 
     def get_approximation(self, date, output_path):
@@ -57,7 +57,7 @@ class AshesAndDust:
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO,
+    logging.basicConfig(level=logging.WARNING,
                         format="[%(asctime)s] %(name)s - %(levelname)s - %(message)s")
 
     app = AshesAndDust()
