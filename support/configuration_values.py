@@ -52,6 +52,11 @@ class ConfigurationValues:
             "key": "elevation .tif file path",
             "default": "/Users/tomerisraeli/Library/CloudStorage/GoogleDrive-tomer.israeli.43@gmail.com/My Drive/year_2/Magdad/data_samples/elevation/elevation final wgs/elevatinowgs.tif"
         }
+        DTWB_data_path = {
+            "section": "Resources",
+            "key": "distance to water .tif file path",
+            "default": "/Users/tomerisraeli/Library/CloudStorage/GoogleDrive-tomer.israeli.43@gmail.com/My Drive/year_2/Magdad/data_samples/dist_to_water/distance_from_water.tif"
+        }
 
         values = [
             data_base_path,

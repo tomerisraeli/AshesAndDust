@@ -65,7 +65,9 @@ class TifParser(Parser):
         base_lon = raster.bounds.left
 
         logging.info(
-            f"populating tif data batch with base coord (lat:{base_lat}, lon:{base_lon}) to (lat:{raster.bounds.top}, lon:{raster.bounds.right}) with res (lat:{lat_res}, lon:{lon_res})")
+            f"populating tif data batch with base coord (lat:{base_lat}, lon:{base_lon}) to (lat:{raster.bounds.top}, "
+            f"lon:{raster.bounds.right}) with res (lat:{lat_res}, lon:{lon_res})"
+        )
 
         lat_values = batch.range.lat_samples
         lon_values = batch.range.lon_samples

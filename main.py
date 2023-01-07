@@ -5,6 +5,7 @@ from matplotlib import pyplot as plt
 from DataBase.DBConstants import DBConstants
 from DataBase.DataBaseDataTypes.data_base_variable import DBVariable
 from DataBase.data_base import DataBase
+from DataParsers.distance_to_water_parser import DistanceToWaterParser
 from DataParsers.elavation_parser import ElevationParser
 from support.configuration_values import ConfigurationValues
 
@@ -31,12 +32,18 @@ class AshesAndDust:
         :return:
         """
 
-        logging.info("parsing elevation data")
-        elevation_parser = ElevationParser(config=self.__config)
-        elevation_data = elevation_parser.parse(self.__db.range)
-        logging.info("parsed elevation data successfully")
-        self.__db.insert(elevation_data)
-        logging.info("elevation data inserted to db successfully")
+        parsers = [
+            # ElevationParser(config=self.__config),
+            DistanceToWaterParser(config=self.__config)
+        ]
+
+        for parser in parsers:
+            logging.info(f"parsing using {parser.__module__}")
+            parsed_data = parser.parse(self.__db.range)
+            logging.info("parsed data successfully")
+            logging.debug("inserting data to db")
+            self.__db.insert(parsed_data)
+            logging.info("data inserted to db successfully")
 
     def get_spatial_data(self, var: DBVariable):
         rng = self.__db.range
@@ -57,6 +64,6 @@ if __name__ == '__main__':
 
     app = AshesAndDust()
     app.update_data_base()
-    data = app.get_spatial_data(DBConstants.VAR_ELEV)
-    plt.imshow(data.data[0], vmin=-500, vmax=3000)
+    data = app.get_spatial_data(DBConstants.VAR_DTWB)
+    plt.imshow(data.data[0])
     plt.show()
