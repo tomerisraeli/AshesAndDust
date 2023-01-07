@@ -3,6 +3,8 @@ import os.path
 from typing import Any
 import logging
 
+from support import loggers
+
 
 class ConfigurationValues:
     """
@@ -96,7 +98,7 @@ class ConfigurationValues:
         :return: None
         """
 
-        logging.warning(f"configuration.ini file is missing, creating a new one at \'{self.__path}\'")
+        loggers.config_logger.warning(f"configuration.ini file is missing, creating a new one at \'{self.__path}\'")
 
         # first, create the sections
         for section in ConfigurationValues.Keys.sections():
@@ -123,13 +125,13 @@ class ConfigurationValues:
         if not all([keyword in key.keys() for keyword in ["key", "section", "default"]]):
             # some keywords are missing
             msg = f"the given key({key}) is in the wrong format"
-            logging.fatal(msg)
+            loggers.config_logger.fatal(msg)
             raise KeyError(msg)
         if not key["section"] in self.__config.sections():
-            logging.warning(f"section \'{key['section']}\' is missing, using default values")
+            loggers.config_logger.warning(f"section \'{key['section']}\' is missing, using default values")
             return key["default"]
         if not key["key"] in self.__config[key["section"]]:
-            logging.warning(f"key \'{key['key']}\' is missing at \'{key['section']}\', using default values")
+            loggers.config_logger.warning(f"key \'{key['key']}\' is missing at \'{key['section']}\', using default values")
             return key["default"]
 
         return self.__config[key["section"]][key["key"]]
