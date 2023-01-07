@@ -10,9 +10,6 @@ from DataParsers.elavation_parser import ElevationParser
 from support.configuration_values import ConfigurationValues
 
 
-# TODO: add logs
-
-
 class AshesAndDust:
     """
     the main class of the project.
@@ -60,7 +57,8 @@ class AshesAndDust:
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.INFO,
+                        format="[%(asctime)s] %(name)s - %(levelname)s - %(message)s")
 
     app = AshesAndDust()
     app.update_data_base()
