@@ -1,6 +1,9 @@
 from typing import Tuple
 
+import numpy as np
+
 from DataBase.data_base_errors import CoordinateOutOfBoundsError
+from support import approximations
 
 
 class DBRange:
@@ -51,15 +54,31 @@ class DBRange:
         """
 
         indices = \
-            round((time - self.__min_time) / self.__time_res), \
-            round((lat - self.__min_lat) / self.__lat_res), \
-            round((lon - self.__min_lon) / self.__lon_res)
+            approximations.index_approximation(self.__min_time, self.__time_res, time), \
+            approximations.index_approximation(self.__min_lat, self.__lat_res, lat), \
+            approximations.index_approximation(self.__min_lon, self.__lon_res, lon),
 
         # validate values
-        if not all([0 <= indices[i] <= self.shape[i] for i in range(len(indices))]):
+        if not all([0 <= indices[i] < self.shape[i] for i in range(len(indices))]):
             raise CoordinateOutOfBoundsError(
                 f"the given coordinate (time: {time}, lat: {lat}, lon: {lon}) is out of range"
             )
 
         return indices
 
+    def __str__(self):
+        return \
+            f"""
+            DBRange:
+            time: {self.__min_time} to {self.__max_time} with res {self.__time_res}
+            lat : {self.__min_lat} to {self.__max_lat} with res {self.__lat_res}
+            lon : {self.__min_lon} to {self.__max_lon} with res {self.__lon_res}
+            """
+
+    @property
+    def lat_samples(self):
+        return np.linspace(self.__min_lat, self.__max_lat, self.shape[1], endpoint=True)
+
+    @property
+    def lon_samples(self):
+        return np.linspace(self.__min_lon, self.__max_lon, self.shape[2], endpoint=True)

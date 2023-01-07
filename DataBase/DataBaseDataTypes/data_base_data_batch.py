@@ -4,7 +4,7 @@ import numpy as np
 from numpy import NaN
 
 from DataBase.DataBaseDataTypes.data_base_range import DBRange
-from DataBase.DataBaseDataTypes.data_base_variable import DataBaseVariable
+from DataBase.DataBaseDataTypes.data_base_variable import DBVariable
 
 
 class DBBatch:
@@ -12,7 +12,7 @@ class DBBatch:
     hold a batch of data to write to the db or data that were read from the db
     """
 
-    def __init__(self, var: DataBaseVariable, data_range: DBRange):
+    def __init__(self, var: DBVariable, data_range: DBRange):
         """
         initialize a new db batch
         :param var: the var to hold in the batch
@@ -53,6 +53,18 @@ class DBBatch:
 
         indices = self.__range.get_indices_approximation(time, lat, lon)
         self.__data[indices] = value
+
+    def insert_by_index(self, time: float, lat: float, lon: float, value):
+        """
+        insert data by indices of value instead of lat lon actual values
+        :param time:
+        :param lat:
+        :param lon:
+        :param value:
+        :return:
+        """
+        self.__data[time, lat, lon] = value
+
 
     def __getitem__(self, item: Tuple[float, float, float]):
         """

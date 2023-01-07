@@ -1,3 +1,11 @@
+import logging
+
+from matplotlib import pyplot as plt
+
+from DataBase.DBConstants import DBConstants
+from DataBase.DataBaseDataTypes.data_base_variable import DBVariable
+from DataBase.data_base import DataBase
+from DataParsers.elavation_parser import ElevationParser
 from support.configuration_values import ConfigurationValues
 
 
@@ -10,19 +18,30 @@ class AshesAndDust:
     the user interfaces should use it to call the different features of the program
     """
 
-    # the path to the config file
+    # the path to the __config file
     __Config_File_Path = "configuration.ini"
 
     def __init__(self):
         self.__config = ConfigurationValues(AshesAndDust.__Config_File_Path)
+        self.__db = DataBase(self.__config)
 
     def update_data_base(self):
         """
         call all the parsers and insert the data to the db
-
         :return:
         """
-        pass
+
+        logging.info("parsing elevation data")
+        elevation_parser = ElevationParser(config=self.__config)
+        elevation_data = elevation_parser.parse(self.__db.range)
+        logging.info("parsed elevation data successfully")
+        self.__db.insert(elevation_data)
+        logging.info("elevation data inserted to db successfully")
+
+    def get_spatial_data(self, var: DBVariable):
+        rng = self.__db.range
+        logging.info(f"fetching {var.name} from db for range: {rng}")
+        return self.__db.load(rng, var)
 
     def get_approximation(self, date, output_path):
         """
@@ -32,3 +51,12 @@ class AshesAndDust:
         """
         pass
 
+
+if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
+
+    app = AshesAndDust()
+    app.update_data_base()
+    data = app.get_spatial_data(DBConstants.VAR_ELEV)
+    plt.imshow(data.data[0], vmin=-500, vmax=3000)
+    plt.show()

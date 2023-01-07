@@ -1,9 +1,9 @@
-class DataBaseVariable:
+class DBVariable:
     """
     the data in a NetCDF file is stored in variables. this class represents those
     """
 
-    def __init__(self, name, var_type, dimensions, units, full_name, default = None):
+    def __init__(self, name, var_type, dimensions, units, full_name, default=None):
         """
         create a new database var
         :param name: (str) the name of the var
@@ -20,3 +20,11 @@ class DataBaseVariable:
         self.units = units
         self.full_name = full_name
         self.default = default
+
+    @property
+    def is_spatial_only(self):
+        """
+        check if the var is changing over time
+        :return:
+        """
+        return len(self.dimensions) == 2

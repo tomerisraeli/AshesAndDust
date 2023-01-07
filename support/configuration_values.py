@@ -8,7 +8,7 @@ class ConfigurationValues:
     """
     the main point of this class is to wrap the configparser and make it easier to use
 
-    to add a new config value all you should do is
+    to add a new __config value all you should do is
     1. add a new ket at the class Keys
     2. add the key to the values list
     * to really add it to the file, you should add this manually or delete the .ini file and let the program do
@@ -16,8 +16,8 @@ class ConfigurationValues:
 
     to get a value, you just need to create a new ConfigurationValues instance and use the get_key func like so
 
-    config = ConfigurationValues("<the path of your file>")
-    value = config.get_key(ConfigurationValues.Keys.data_base_path)
+    __config = ConfigurationValues("<the path of your file>")
+    value = __config.get_key(ConfigurationValues.Keys.data_base_path)
 
     # notice that the values are returned as str, you can easily parse them
 
@@ -32,20 +32,25 @@ class ConfigurationValues:
         # when adding new key, make sure to add it to the values list!
 
         data_base_path = {"section": "DataBase", "key": "Data Base Path", "default": "data_base.nc"}
-        data_base_min_lat = {"section": "DataBaseRange", "key": "min latitude", "default": "29.5"}
-        data_base_max_lat = {"section": "DataBaseRange", "key": "max latitude", "default": "33.5"}
+        data_base_min_lat = {"section": "DataBaseRange", "key": "min latitude", "default": "27"}
+        data_base_max_lat = {"section": "DataBaseRange", "key": "max latitude", "default": "32"}
         data_base_min_lon = {"section": "DataBaseRange", "key": "min longitude", "default": "34"}
-        data_base_max_lon = {"section": "DataBaseRange", "key": "max longitude", "default": "36"}
+        data_base_max_lon = {"section": "DataBaseRange", "key": "max longitude", "default": "38"}
         data_base_min_time = {"section": "DataBaseRange", "key": "min time(days since 1.1.2000)", "default": "3640"}
-        data_base_max_time = {"section": "DataBaseRange", "key": "max time(days since 1.1.2000", "default": "10000"}
-        lat_res = {"section": "DataBaseResolution", "key": "latitude resolution(degrees)", "default": "0.01"}
-        lon_res = {"section": "DataBaseResolution", "key": "longitude resolution(degrees)", "default": "0.01"}
+        data_base_max_time = {"section": "DataBaseRange", "key": "max time(days since 1.1.2000", "default": "8000"}
+        lat_res = {"section": "DataBaseResolution", "key": "latitude resolution(degrees)", "default": "0.001"}
+        lon_res = {"section": "DataBaseResolution", "key": "longitude resolution(degrees)", "default": "0.001"}
         time_res = {"section": "DataBaseResolution", "key": "time resolution(days)", "default": "1"}
 
         ndvi_data_path = {
             "section": "Resources",
             "key": "NDVI .nc file path",
             "default": "/Users/tomerisraeli/Library/CloudStorage/GoogleDrive-tomer.israeli.43@gmail.com/My Drive/year_2/Magdad/data_samples/NDVI/NDVI-ISRAEL-2010-2020"
+        }
+        elevation_data_path = {
+            "section": "Resources",
+            "key": "elevation .tif file path",
+            "default": "/Users/tomerisraeli/Library/CloudStorage/GoogleDrive-tomer.israeli.43@gmail.com/My Drive/year_2/Magdad/data_samples/elevation/elevation final wgs/elevatinowgs.tif"
         }
 
         values = [
@@ -54,7 +59,7 @@ class ConfigurationValues:
             data_base_max_lat, data_base_min_lat,
             data_base_max_time, data_base_min_time,
             lat_res, lon_res, time_res,
-            ndvi_data_path
+            ndvi_data_path, elevation_data_path
         ]
 
         @staticmethod
@@ -63,7 +68,7 @@ class ConfigurationValues:
 
     def __init__(self, config_path: str):
         """
-        open the config file, if missing a new one will be created
+        open the __config file, if missing a new one will be created
         :param config_path:
         """
 
