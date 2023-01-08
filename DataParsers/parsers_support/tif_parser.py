@@ -12,7 +12,7 @@ import rasterio
 import rasterio.plot
 
 from DataParsers.praser_exceptions.wrong_crs_parser_exception import CrsError
-from support import approximations
+from support import approximations, loggers
 from support.configuration_values import ConfigurationValues
 from tqdm import tqdm
 
@@ -47,8 +47,10 @@ class TifParser(Parser):
                 raise CrsError(f"the given .tif file is at the wrong crs ({raster.crs}) "
                                f"it should be {TifParser.LAT_LON_CRS}")
 
-            result = DBBatch(self.__var, data_range)
+            loggers.root_logger.info(f"opened {self.__path}. starting to parse...")
 
+            result = DBBatch(self.__var, data_range)
+            loggers.root_logger.debug("populating data from raster")
             self.__populate_batch(raster, result)
             return result
 
@@ -59,19 +61,23 @@ class TifParser(Parser):
         :return:
         """
 
+        loggers.root_logger.debug(f"raster shape {raster.shape}")
         data = raster.read(self.__band)
+
         lat_res = (raster.bounds.top - raster.bounds.bottom) / raster.shape[0]
         lon_res = (raster.bounds.right - raster.bounds.left) / raster.shape[1]
         base_lat = raster.bounds.bottom
         base_lon = raster.bounds.left
 
-        logging.info(
+        loggers.root_logger.info(
             f"populating tif data batch with base coord (lat:{base_lat}, lon:{base_lon}) to (lat:{raster.bounds.top}, "
             f"lon:{raster.bounds.right}) with res (lat:{lat_res}, lon:{lon_res})"
         )
 
         lat_values = batch.range.lat_samples
         lon_values = batch.range.lon_samples
+
+        loggers.root_logger.debug(f"parsing data with {len(lat_values)} lat samples and {len(lon_values)} lon samples")
 
         for db_lat_index, lat in enumerate(lat_values):
             lat_index = approximations.index_approximation(base_lat, lat_res, lat)
