@@ -1,5 +1,6 @@
 import logging
 
+import rasterio
 from matplotlib import pyplot as plt
 
 from DataBase.DBConstants import DBConstants

@@ -1,3 +1,5 @@
+import rasterio
+
 from DataBase.DBConstants import DBConstants
 from DataParsers.parsers_support.tif_parser import TifParser
 

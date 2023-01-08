@@ -41,6 +41,7 @@ class TifParser(Parser):
 
     def parse(self, data_range: DBRange) -> DBBatch:
         with rasterio.open(self.__path) as raster:
+
             # validate file crs
             if not raster.crs == TifParser.LAT_LON_CRS:
                 raise CrsError(f"the given .tif file is at the wrong crs ({raster.crs}) "
