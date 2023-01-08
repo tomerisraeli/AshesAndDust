@@ -34,10 +34,10 @@ class ConfigurationValues:
         # when adding new key, make sure to add it to the values list!
 
         data_base_path = {"section": "DataBase", "key": "Data Base Path", "default": "data_base.nc"}
-        data_base_min_lat = {"section": "DataBaseRange", "key": "min latitude", "default": "27"}
-        data_base_max_lat = {"section": "DataBaseRange", "key": "max latitude", "default": "32"}
+        data_base_min_lat = {"section": "DataBaseRange", "key": "min latitude", "default": "29"}
+        data_base_max_lat = {"section": "DataBaseRange", "key": "max latitude", "default": "34"}
         data_base_min_lon = {"section": "DataBaseRange", "key": "min longitude", "default": "34"}
-        data_base_max_lon = {"section": "DataBaseRange", "key": "max longitude", "default": "38"}
+        data_base_max_lon = {"section": "DataBaseRange", "key": "max longitude", "default": "36"}
         data_base_min_time = {"section": "DataBaseRange", "key": "min time(days since 1.1.2000)", "default": "3640"}
         data_base_max_time = {"section": "DataBaseRange", "key": "max time(days since 1.1.2000", "default": "8000"}
         lat_res = {"section": "DataBaseResolution", "key": "latitude resolution(degrees)", "default": "0.001"}
@@ -57,7 +57,7 @@ class ConfigurationValues:
         DTWB_data_path = {
             "section": "Resources",
             "key": "distance to water .tif file path",
-            "default": "/Users/tomerisraeli/Library/CloudStorage/GoogleDrive-tomer.israeli.43@gmail.com/My Drive/year_2/Magdad/data_samples/dist_to_water/distance_from_water.tif"
+            "default": "/Users/tomerisraeli/Library/CloudStorage/GoogleDrive-tomer.israeli.43@gmail.com/My Drive/year_2/Magdad/data_samples/dist_to_water/massive_water_dist.tif"
         }
 
         values = [
@@ -66,7 +66,7 @@ class ConfigurationValues:
             data_base_max_lat, data_base_min_lat,
             data_base_max_time, data_base_min_time,
             lat_res, lon_res, time_res,
-            ndvi_data_path, elevation_data_path
+            ndvi_data_path, elevation_data_path, DTWB_data_path
         ]
 
         @staticmethod
