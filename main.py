@@ -1,12 +1,12 @@
 import logging
 
-import rasterio
 from matplotlib import pyplot as plt
 
 from DataBase.DBConstants import DBConstants
 from DataBase.DataBaseDataTypes.data_base_variable import DBVariable
 from DataBase.data_base import DataBase
 from DataParsers.distance_to_water_parser import DistanceToWaterParser
+from DataParsers.elavation_parser import ElevationParser
 from support import loggers
 from support.configuration_values import ConfigurationValues
 
@@ -18,10 +18,9 @@ class AshesAndDust:
     """
 
     # the path to the __config file
-    __Config_File_Path = "configuration.ini"
 
-    def __init__(self):
-        self.__config = ConfigurationValues(AshesAndDust.__Config_File_Path)
+    def __init__(self, config="configuration.ini"):
+        self.__config = ConfigurationValues(config)
         self.__db = DataBase(self.__config)
 
     def update_data_base(self):
@@ -31,7 +30,7 @@ class AshesAndDust:
         """
 
         parsers = [
-            # ElevationParser(config=self.__config),
+            ElevationParser(config=self.__config),
             DistanceToWaterParser(config=self.__config)
         ]
 
@@ -62,7 +61,14 @@ if __name__ == '__main__':
                         format="[%(asctime)s] %(name)s - %(levelname)s - %(message)s")
 
     app = AshesAndDust()
-    app.update_data_base()
-    data = app.get_spatial_data(DBConstants.VAR_DTWB)
-    plt.imshow(data.data[0])
+    # app.update_data_base()
+
+    f, axarr = plt.subplots(1, 2, sharex="all", sharey="all")
+    dist_to_water_data = app.get_spatial_data(DBConstants.VAR_DTWB)
+    elevation_data = app.get_spatial_data(DBConstants.VAR_ELEV)
+
+    axarr[0].imshow(dist_to_water_data.data[0])
+    axarr[0].set_title("distance to major water bodies")
+    axarr[1].imshow(elevation_data.data[0], vmax=3000, vmin=-500)
+    axarr[1].set_title("elevation in meters")
     plt.show()
