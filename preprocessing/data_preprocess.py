@@ -2,7 +2,7 @@ class DataPreprocess:
     MAIN_RAW_DATA_DIR = ""  # a directory to store all raw data at
 
     @staticmethod
-    def fetch(self):
+    def fetch():
         """
         fetch the data from its source(local or remote) and save it at the raw data directory
 
@@ -13,7 +13,7 @@ class DataPreprocess:
         pass
 
     @staticmethod
-    def preprocess(self):
+    def preprocess():
         """
         get the data from the _raw_data_directory and fit it to the coordinate system
 
