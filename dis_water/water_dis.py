@@ -1,17 +1,18 @@
 import rioxarray
 import geopandas
-import matplotlib.pyplot as plt
+import os
 
-tile_list_shp = ['/Users/nuriel/PycharmProjects/AshesAndDust/AshesAndDust/dis_water/data/h20v05.shp',
-                 '/Users/nuriel/PycharmProjects/AshesAndDust/AshesAndDust/dis_water/data/h21v05.shp',
-                 '/Users/nuriel/PycharmProjects/AshesAndDust/AshesAndDust/dis_water/data/h21v06.shp']
+current_working_dir = os.getcwd()
+tile_list_shp = [f'{current_working_dir}/data/h20v05.shp',
+                 f'{current_working_dir}/data/h21v05.shp',
+                 f'{current_working_dir}/data/h21v06.shp']
 
-geotif_of_tile = ['/Users/nuriel/PycharmProjects/AshesAndDust/AshesAndDust/dis_water/data/h20v05.tif',
-                  '/Users/nuriel/PycharmProjects/AshesAndDust/AshesAndDust/dis_water/data/h21v05.tif',
-                  '/Users/nuriel/PycharmProjects/AshesAndDust/AshesAndDust/dis_water/data/h21v06.tif']
+geotif_of_tile = [f'{current_working_dir}/data/h20v05.tif',
+                  f'{current_working_dir}/data/h21v05.tif',
+                  f'{current_working_dir}/data/h21v06.tif']
 # geotif_road_all_of_israel
-geotif_land_use = ["/Users/nuriel/PycharmProjects/AshesAndDust/AshesAndDust/dis_water/data/dist_massive_water.tif"
-    ,"/Users/nuriel/PycharmProjects/AshesAndDust/AshesAndDust/dis_water/data/dist_to_water.tif"]
+geotif_land_use = [f"{current_working_dir}/data/dist_massive_water.tif"
+    ,f"{current_working_dir}/data/dist_to_water.tif"]
 
 for tile, tile_grid in zip(tile_list_shp, geotif_of_tile):
     geodf = geopandas.read_file(tile)
@@ -22,6 +23,9 @@ for tile, tile_grid in zip(tile_list_shp, geotif_of_tile):
         clipped = xds1.rio.clip(geodf.geometry.values, geodf.crs, drop=False, invert=False)  # clip the raster
         xds_repr_match = clipped.rio.reproject_match(to_match)
         data_reprojected = xds_repr_match.rio.reproject("EPSG:2039")
-        plt.imshow(data_reprojected.squeeze())
-        plt.show()
-        plt.clf()
+        data_reprojected.to_netcdf(f'{os.path.basename(tile)}-{os.path.basename(land)}.nc')
+        # # visualize data
+        # plt.imshow(data_reprojected.squeeze())
+        # plt.show()
+        # plt.clf()
+
