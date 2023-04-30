@@ -1,35 +1,28 @@
 import os
-from typing import Tuple
-
 import numpy as np
 import rasterio
 from rasterio.warp import calculate_default_transform, reproject, Resampling
+import matplotlib.pyplot as plt
 
 
-def convert_projection(file_path: str, new_epsg: str) -> str:
+def convert_projection(file_path: str, new_epsg: int) -> str:
     """
     Converts a TIFF file to a new EPSG projection and replaces the original file with the updated file.
 
     Args:
         file_path (str): The path to the input TIFF file.
-        new_epsg (str): The new EPSG code to reproject the file to.
+        new_epsg (int): The new EPSG code to reproject the file to.
+        show_image (bool, optional): Whether to show the reprojected image. Defaults to False.
 
     Returns:
         str: The path to the updated file.
 
     Raises:
         FileNotFoundError: If the input file does not exist.
-        ValueError: If the new EPSG code is invalid.
     """
     # Check if the input file exists
     if not os.path.isfile(file_path):
         raise FileNotFoundError(f"{file_path} does not exist.")
-    
-    # Check if the new EPSG code is valid
-    try:
-        int(new_epsg)
-    except ValueError:
-        raise ValueError("Invalid EPSG code.")
 
     # Open the input file and get its metadata
     with rasterio.open(file_path) as src:
@@ -64,5 +57,18 @@ def convert_projection(file_path: str, new_epsg: str) -> str:
         os.remove(file_path)
         os.rename(updated_file_path, file_path)
 
+        # Open the updated file and display the image
+        with rasterio.open(file_path) as src:
+            plt.imshow(src.read(1))
+            plt.show()
+
         # Return the path to the updated file
         return file_path
+
+
+def main():
+    convert_projection("h20v05.tif", 2039)
+
+
+if __name__ == "__main__":
+    main()
