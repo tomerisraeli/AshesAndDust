@@ -9,18 +9,20 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score
 
-file_path = './h20v05_AOT_one_year.nc'
+
+file_paths = ['./h20v05_AOT_one_year.nc', './h20v05WindSpeed_YEAR.nc', './h20v05RelativeHumidity_YEAR.nc']
+data_types = ['AOT', 'Ws', 'RH']
 model_path = './model.sav'
 
 def get_data(file_path):
     dataset = xr.open_dataset(file_path)
     df = dataset.to_dataframe()
     df = df.reset_index()
-    return [df.dropna(),df-df.dropna()]
+    return df
 
 def split_data(data, precentage, data_type):
     data = data.drop('time', axis=1)
-    X_train, X_test, y_train, y_test = train_test_split(data, data[data_type], test_size=precentage)
+    X_train, X_test, y_train, y_test = train_test_split(data, data,test_size=precentage)
     return X_train, X_test, y_train, y_test
 
 def reset_model():
@@ -34,10 +36,10 @@ def load_model(model_path):
         rf = pickle.load(open(model_path, 'rb'))
         return rf
     except:
-        return RandomForestRegressor(n_estimators=10, max_depth=2) 
+        return RandomForestRegressor(n_estimators=25, max_depth=5) 
 
-def train_model(df, rf):  
-    X_train, X_test, y_train, y_test = split_data(df, uniform(0.15, 0.85), 'AOT')    
+def train_model(df, rf, data_type):  
+    X_train, X_test, y_train, y_test = split_data(df, 0.3, data_type)    
     rf.fit(X_train, y_train)
     y_pred = rf.predict(X_test)
     accuracy = r2_score(y_test, y_pred)    
@@ -49,8 +51,7 @@ def display_testing(num, df):
     loop = []
     rf = load_model(model_path)
     for i in range(num):
-        acc,trained_rf = train_model(df, rf)
-        print(acc)
+        acc,trained_rf = train_model(df, rf, data_types[0])
         accuracy.append(acc)
         loop.append(i+1)
         rf = trained_rf
@@ -64,9 +65,16 @@ def display_testing(num, df):
 
     return rf
 
+def combine_files(file_paths, data_types):
+    df = get_data(file_paths[0])
+    for i in range(1,len(file_paths)):
+        df[data_types[i]] = get_data(file_paths[i])[data_types[i]]
+    return df
+
 if __name__ == '__main__':
-    df, complete_df = get_data(file_path)
-    rf = display_testing(5, df)
+    
+    df = combine_files(file_paths, data_types)
+    cleaned_df = df.dropna()
+    rf = display_testing(1000, cleaned_df)
     save_model(rf, model_path)
-
-
+    
